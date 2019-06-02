@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Борис Давыденко](https://up.htmlacademy.ru/javascript/17/user/815063).
-* Наставник: `Неизвестно`.
+* Наставник: Евгений Гусев.
 
 ---
 
