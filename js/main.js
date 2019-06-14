@@ -4,6 +4,7 @@ var MIN_Y_COORDINATE = 130; // Минимальная координата Y м�
 var MAX_Y_COORDINATE = 630; // Максимальная координата Y метки на карте
 var WIDTH_PIN = 50; // Ширина метки, определяется в CSS
 var HEIGHT_PIN = 70; // Высота метки, определяется в CSS
+var ALT_TEXT_IMG = 'заголовок объявления';
 
 var numbers = [1, 2, 3, 4, 5, 6, 7, 8];
 var offers = ['palace', 'flat', 'house', 'bungalo'];
@@ -70,7 +71,7 @@ var createPin = function (pin) {
   var pinElement = pinTemplate.cloneNode(true);
 
   pinElement.querySelector('img').src = pin.author.avatar;
-  pinElement.querySelector('img').alt = pin.offer.type;
+  pinElement.querySelector('img').alt = ALT_TEXT_IMG;
   pinElement.querySelector('.map__pin').style.left = pin.location.x - WIDTH_PIN / 2 + 'px';
   pinElement.querySelector('.map__pin').style.top = pin.location.y - HEIGHT_PIN + 'px';
 
