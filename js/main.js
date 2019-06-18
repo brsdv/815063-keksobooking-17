@@ -21,6 +21,12 @@ addressName.setAttribute('value', startCoordinateX + ', ' + startCoordinateY); /
 var pinTemplate = document.querySelector('#pin')
   .content;
 
+var titleInput = adForm.querySelector('#title');
+var priceInput = adForm.querySelector('#price');
+var typeSelect = adForm.querySelector('#type');
+var timeInSelect = adForm.querySelector('#timein');
+var timeOutSelect = adForm.querySelector('#timeout');
+
 var getGenerationPin = function () {
   var arrObj = [];
 
@@ -121,4 +127,74 @@ var pinCoordinate = function () {
 pinMainButton.addEventListener('mouseup', function () {
   getStatusPage(false);
   pinCoordinate();
+});
+
+var changeInputPriceHandler = function (val) {
+  if (val === 'bungalo') {
+    priceInput.placeholder = 0;
+    priceInput.setAttribute('min', 0);
+  } else if (val === 'flat') {
+    priceInput.placeholder = 1000;
+    priceInput.setAttribute('min', 1000);
+  } else if (val === 'house') {
+    priceInput.placeholder = 5000;
+    priceInput.setAttribute('min', 5000);
+  } else if (val === 'palace') {
+    priceInput.placeholder = 10000;
+    priceInput.setAttribute('min', 10000);
+  }
+};
+
+var changeSelectTimeHandler = function (val) {
+  var timeInOptions = timeInSelect.querySelectorAll('option');
+  var timeOutOptions = timeOutSelect.querySelectorAll('option');
+
+  for (var i = 0; i < timeInOptions.length; i++) {
+    for (var j = 0; j < timeInOptions.length; j++) {
+      timeInOptions[j].removeAttribute('selected');
+      timeOutOptions[j].removeAttribute('selected');
+    }
+
+    if (timeInOptions[i].value === val && !timeOutOptions[i].selected) {
+      timeOutOptions[i].selected = true;
+    } else if (timeOutOptions[i].value === val && !timeInOptions[i].selected) {
+      timeInOptions[i].selected = true;
+    }
+  }
+};
+
+typeSelect.addEventListener('change', function (evt) {
+  changeInputPriceHandler(evt.target.value);
+});
+
+timeInSelect.addEventListener('change', function (evt) {
+  changeSelectTimeHandler(evt.target.value);
+});
+
+timeOutSelect.addEventListener('change', function (evt) {
+  changeSelectTimeHandler(evt.target.value);
+});
+
+titleInput.addEventListener('invalid', function (evt) {
+  if (titleInput.validity.tooShort) {
+    titleInput.setCustomValidity('Минимальная длина заголовка: ' + evt.target.minLength);
+  } else if (titleInput.validity.tooLong) {
+    titleInput.setCustomValidity('Максимальная длина заголовка: ' + evt.target.maxLength);
+  } else if (titleInput.validity.valueMissing) {
+    titleInput.setCustomValidity('Обязательное поле для заполнения');
+  } else {
+    titleInput.setCustomValidity('');
+  }
+});
+
+priceInput.addEventListener('invalid', function (evt) {
+  if (priceInput.validity.rangeOverflow) {
+    priceInput.setCustomValidity('Число не должно превышать: ' + evt.target.max);
+  } else if (priceInput.validity.rangeUnderflow) {
+    priceInput.setCustomValidity('Число не должно быть меньше: ' + evt.target.min);
+  } else if (priceInput.validity.valueMissing) {
+    priceInput.setCustomValidity('Обязательное поле для заполнения');
+  } else {
+    priceInput.setCustomValidity('');
+  }
 });
