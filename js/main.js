@@ -4,15 +4,20 @@ var MIN_Y_COORDINATE = 130; // Минимальная координата Y м�
 var MAX_Y_COORDINATE = 630; // Максимальная координата Y метки на карте
 var WIDTH_PIN = 50; // Ширина метки, определяется в CSS
 var HEIGHT_PIN = 70; // Высота метки, определяется в CSS
+var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
 var ALT_TEXT_IMG = 'заголовок объявления';
 
 var numbers = [1, 2, 3, 4, 5, 6, 7, 8];
 var offers = ['palace', 'flat', 'house', 'bungalo'];
 
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+var pinContainer = document.querySelector('.map__pins'); // Контейнер для всех меток объявлений
+var pinMainButton = pinContainer.querySelector('.map__pin--main'); // Начальная метка на карте
+var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
+var addressName = adForm.querySelector('#address'); // Поле ввода адреса
+var startCoordinateX = Math.round(pinMainButton.offsetLeft + pinMainButton.offsetWidth / 2); // Середина начальной метки на карте по оси X
+var startCoordinateY = Math.round(pinMainButton.offsetTop + pinMainButton.offsetHeight / 2); // Середина начальной метки на карте по оси Y
+addressName.setAttribute('value', startCoordinateX + ', ' + startCoordinateY); // Добавляю в поле "адрес" координаты метки в неактивном режиме
 
-var mapPinContainer = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin')
   .content;
 
@@ -88,4 +93,32 @@ var renderPin = function () {
   return fragment;
 };
 
-mapPinContainer.appendChild(renderPin());
+var getStatusPage = function (status) {
+  var map = document.querySelector('.map');
+  var fieldsets = adForm.querySelectorAll('fieldset');
+
+  if (!status) {
+    map.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+    pinContainer.appendChild(renderPin());
+  }
+
+  for (var i = 0; i < fieldsets.length; i++) {
+    fieldsets[i].disabled = status;
+
+    if (!status) {
+      fieldsets[i].removeAttribute('disabled');
+    }
+  }
+};
+getStatusPage(true);
+
+var pinCoordinate = function () {
+  var currentCoordinateY = Math.round(pinMainButton.offsetTop + MAIN_HEIGHT_PIN);
+  addressName.setAttribute('value', startCoordinateX + ', ' + currentCoordinateY);
+};
+
+pinMainButton.addEventListener('mouseup', function () {
+  getStatusPage(false);
+  pinCoordinate();
+});
