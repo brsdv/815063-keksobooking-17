@@ -145,22 +145,9 @@ var changeInputPriceHandler = function (val) {
   }
 };
 
-var changeSelectTimeHandler = function (val) {
-  var timeInOptions = timeInSelect.querySelectorAll('option');
-  var timeOutOptions = timeOutSelect.querySelectorAll('option');
-
-  for (var i = 0; i < timeInOptions.length; i++) {
-    for (var j = 0; j < timeInOptions.length; j++) {
-      timeInOptions[j].removeAttribute('selected');
-      timeOutOptions[j].removeAttribute('selected');
-    }
-
-    if (timeInOptions[i].value === val && !timeOutOptions[i].selected) {
-      timeOutOptions[i].selected = true;
-    } else if (timeOutOptions[i].value === val && !timeInOptions[i].selected) {
-      timeInOptions[i].selected = true;
-    }
-  }
+var changeSelectTimeHandler = function (opt, index) {
+  opt.selectedOptions[0].selected = false;
+  opt.options[index].selected = true;
 };
 
 typeSelect.addEventListener('change', function (evt) {
@@ -168,11 +155,11 @@ typeSelect.addEventListener('change', function (evt) {
 });
 
 timeInSelect.addEventListener('change', function (evt) {
-  changeSelectTimeHandler(evt.target.value);
+  changeSelectTimeHandler(timeOutSelect, evt.target.selectedIndex);
 });
 
 timeOutSelect.addEventListener('change', function (evt) {
-  changeSelectTimeHandler(evt.target.value);
+  changeSelectTimeHandler(timeInSelect, evt.target.selectedIndex);
 });
 
 titleInput.addEventListener('invalid', function (evt) {
