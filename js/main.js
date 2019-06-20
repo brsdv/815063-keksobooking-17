@@ -187,7 +187,8 @@ pinMain.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
   pinMain.style.zIndex = 10;
 
-  if (map.classList.length === 2) {
+  // если страница дезактивирована, активируем ее
+  if (map.classList.contains('map--faded')) {
     getStatusPage(false);
   }
 
