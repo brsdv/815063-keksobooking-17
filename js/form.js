@@ -11,16 +11,16 @@
   var changeInputPriceHandler = function (val) {
     if (val === 'bungalo') {
       priceInput.placeholder = 0;
-      priceInput.setAttribute('min', 0);
+      priceInput.min = 0;
     } else if (val === 'flat') {
       priceInput.placeholder = 1000;
-      priceInput.setAttribute('min', 1000);
+      priceInput.min = 1000;
     } else if (val === 'house') {
       priceInput.placeholder = 5000;
-      priceInput.setAttribute('min', 5000);
+      priceInput.min = 5000;
     } else if (val === 'palace') {
       priceInput.placeholder = 10000;
-      priceInput.setAttribute('min', 10000);
+      priceInput.min = 10000;
     }
   };
 
