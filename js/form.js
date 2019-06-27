@@ -74,10 +74,12 @@
   };
 
   var errorHandler = function (message) {
-    var errorClone = window.errorTemplate.cloneNode(true);
+    if (adForm.querySelectorAll('.error').length === 0) {
+      var errorClone = window.errorTemplate.cloneNode(true);
+      errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
 
-    errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
-    window.main.appendChild(errorClone);
+      adForm.appendChild(errorClone);
+    }
 
     throw new Error(message);
   };
