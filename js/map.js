@@ -47,11 +47,6 @@
     evt.preventDefault();
     pinMain.style.zIndex = 2;
 
-    // если страница дезактивирована, активируем ее
-    if (map.classList.contains('map--faded')) {
-      setStatusPage(false);
-    }
-
     var startCoordinate = {
       x: evt.clientX,
       y: evt.clientY
@@ -59,6 +54,11 @@
 
     var mouseMoveHandler = function (evtMove) {
       evtMove.preventDefault();
+
+      // если страница дезактивирована, активируем ее
+      if (map.classList.contains('map--faded')) {
+        setStatusPage(false);
+      }
 
       var shift = {
         x: startCoordinate.x - evtMove.clientX,

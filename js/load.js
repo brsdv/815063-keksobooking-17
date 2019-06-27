@@ -1,36 +1,64 @@
 'use strict';
 
 (function () {
-  window.load = function (successHandler, errorHandler) {
-    var xhr = new XMLHttpRequest();
+  window.backend = {
+    load: function (success, error) {
+      var xhr = new XMLHttpRequest();
 
-    xhr.responseType = 'json';
-    xhr.timeout = 10000;
+      xhr.responseType = 'json';
+      xhr.timeout = 10000;
 
-    xhr.addEventListener('load', function () {
-      switch (xhr.status) {
-        case 200:
-          return successHandler(xhr.response);
-        case 403:
-          return errorHandler('Доступ запрещен');
-        case 404:
-          return errorHandler('Страница не найдена');
-        case 500:
-          return errorHandler('Ошибка сервера');
-        default:
-          return errorHandler('Ошибка. Статус ответа - ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
+      xhr.addEventListener('load', function () {
+        switch (xhr.status) {
+          case 200:
+            return success(xhr.response);
+          case 403:
+            return error('Доступ запрещен');
+          case 404:
+            return error('Страница не найдена');
+          case 500:
+            return error('Ошибка сервера');
+          default:
+            return error('Ошибка. Статус ответа - ' + xhr.status + ' ' + xhr.statusText);
+        }
+      });
 
-    xhr.addEventListener('timeout', function () {
-      errorHandler('Время ответа от сервера превысило ' + xhr.timeout + ' мс');
-    });
+      xhr.addEventListener('timeout', function () {
+        error('Время ответа от сервера превысило ' + xhr.timeout + ' мс');
+      });
 
-    xhr.addEventListener('error', function () {
-      errorHandler('Произошла ошибка соединения');
-    });
+      xhr.addEventListener('error', function () {
+        error('Произошла ошибка соединения');
+      });
 
-    xhr.open('GET', 'https://js.dump.academy/keksobooking/data');
-    xhr.send();
+      xhr.open('GET', 'https://js.dump.academy/keksobooking/data');
+      xhr.send();
+    },
+    save: function (data, success, error) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.responseType = 'json';
+      xhr.timeout = 10000;
+
+      xhr.addEventListener('load', function () {
+        switch (xhr.status) {
+          case 200:
+            return success(xhr.response);
+          default:
+            return error('Статус ответа - ' + xhr.status + ' ' + xhr.statusText);
+        }
+      });
+
+      xhr.addEventListener('timeout', function () {
+        error('Время ответа от сервера превысило ' + xhr.timeout + ' мс');
+      });
+
+      xhr.addEventListener('error', function () {
+        error('Произошла ошибка соединения');
+      });
+
+      xhr.open('POST', 'https://js.dump.academy/keksobooking1');
+      xhr.send(data);
+    }
   };
 })();

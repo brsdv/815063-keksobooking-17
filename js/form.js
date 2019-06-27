@@ -64,4 +64,27 @@
       priceInput.setCustomValidity('');
     }
   });
+
+  var successHandler = function () {
+    var successTemplate = document.querySelector('#success')
+      .content;
+    var successClone = successTemplate.cloneNode(true);
+
+    window.main.appendChild(successClone);
+  };
+
+  var errorHandler = function (message) {
+    var errorClone = window.errorTemplate.cloneNode(true);
+
+    errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
+    window.main.appendChild(errorClone);
+
+    throw new Error(message);
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+
+    window.backend.save(new FormData(adForm), successHandler, errorHandler);
+  });
 })();
