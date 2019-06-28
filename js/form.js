@@ -2,6 +2,7 @@
 
 (function () {
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
+  var submit = adForm.querySelector('.ad-form__submit');
   var titleInput = adForm.querySelector('#title');
   var typeSelect = adForm.querySelector('#type');
   var priceInput = adForm.querySelector('#price');
@@ -74,12 +75,18 @@
   };
 
   var errorHandler = function (message) {
-    if (adForm.querySelectorAll('.error').length === 0) {
-      var errorClone = window.errorTemplate.cloneNode(true);
-      errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
+    var errorClone = window.errorTemplate.cloneNode(true);
+    errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
+    window.main.appendChild(errorClone);
 
-      adForm.appendChild(errorClone);
-    }
+    var errorButton = window.main.querySelector('.error');
+    errorButton.addEventListener('click', function (evtClick) {
+      evtClick.preventDefault();
+      window.main.removeChild(errorButton);
+
+      submit.disabled = false;
+      submit.removeAttribute('style');
+    });
 
     throw new Error(message);
   };
@@ -88,5 +95,10 @@
     evt.preventDefault();
 
     window.backend.save(new FormData(adForm), successHandler, errorHandler);
+
+    submit.disabled = true;
+    submit.style.backgroundColor = 'lightgray';
+    submit.style.color = 'gray';
+    submit.style.border = 'none';
   });
 })();
