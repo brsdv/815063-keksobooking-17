@@ -3,27 +3,42 @@
 window.pin = (function () {
   var WIDTH_PIN = 50; // Ширина пользовательской метки, определяется в CSS
   var HEIGHT_PIN = 70; // Высота пользовательской метки, определяется в CSS
-  var ALT_TEXT_IMG = 'заголовок объявления';
 
-  // Шаблон DocumentFragment пользовательской метки на карте
-  var pinTemplate = document.querySelector('#pin')
+  window.main = document.querySelector('main');
+  window.errorTemplate = document.querySelector('#error')
     .content;
   var fragment = document.createDocumentFragment();
+  var pinTemplate = document.querySelector('#pin')
+    .content;
 
-  var createPin = function (pin) {
+  var getCreatePin = function (pin) {
     var pinElement = pinTemplate.cloneNode(true);
 
     pinElement.querySelector('img').src = pin.author.avatar;
-    pinElement.querySelector('img').alt = ALT_TEXT_IMG;
+    pinElement.querySelector('img').alt = pin.offer.title;
     pinElement.querySelector('.map__pin').style.left = pin.location.x - WIDTH_PIN / 2 + 'px';
     pinElement.querySelector('.map__pin').style.top = pin.location.y - HEIGHT_PIN + 'px';
 
     return pinElement;
   };
 
-  for (var i = 0; i < window.data.length; i++) {
-    fragment.appendChild(createPin(window.data[i]));
-  }
+  var successHandler = function (response) {
+    for (var i = 0; i < response.length; i++) {
+      var currentPin = getCreatePin(response[i]);
+      fragment.appendChild(currentPin);
+    }
+  };
+
+  var errorHandler = function (message) {
+    var error = window.errorTemplate.cloneNode(true);
+
+    error.querySelector('.error__message').textContent = message;
+    window.main.appendChild(error);
+
+    throw new Error(message);
+  };
+
+  window.backend.load(successHandler, errorHandler);
 
   return fragment;
 })();

@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var MIN_Y_COORD = 130; // Минимальная координата Y
+  var MAX_Y_COORD = 630; // Максимальная координата Y
   var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
 
   var map = document.querySelector('.map'); // Секция карты
@@ -14,6 +16,7 @@
   var addressInput = adForm.querySelector('#address');
   addressInput.value = startCoordinateX + ', ' + startCoordinateY;
 
+  // Активирует состояние страницы
   var setStatusPage = function (status) {
     var fieldsets = adForm.querySelectorAll('fieldset');
 
@@ -33,6 +36,7 @@
   };
   setStatusPage(true);
 
+  // Устанавливает координаты в поле адрес
   var setPinCoord = function () {
     var currentCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth);
     var currentCoordinateY = Math.round(pinMain.offsetTop + MAIN_HEIGHT_PIN);
@@ -41,21 +45,20 @@
 
   pinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
-    pinMain.style.zIndex = 10;
-
-    // если страница дезактивирована, активируем ее
-    if (map.classList.contains('map--faded')) {
-      setStatusPage(false);
-    }
+    pinMain.style.zIndex = 2;
 
     var startCoordinate = {
       x: evt.clientX,
       y: evt.clientY
     };
 
-    // callback mouseMove
     var mouseMoveHandler = function (evtMove) {
       evtMove.preventDefault();
+
+      // если страница дезактивирована, активируем ее
+      if (map.classList.contains('map--faded')) {
+        setStatusPage(false);
+      }
 
       var shift = {
         x: startCoordinate.x - evtMove.clientX,
@@ -73,12 +76,11 @@
       if (currentX >= map.clientLeft - pinMainHalfWidth && currentX <= map.clientWidth - pinMainHalfWidth) {
         pinMain.style.left = currentX + 'px';
       }
-      if (currentY >= window.MIN_Y_COORD - MAIN_HEIGHT_PIN && currentY <= window.MAX_Y_COORD - MAIN_HEIGHT_PIN) {
+      if (currentY >= MIN_Y_COORD - MAIN_HEIGHT_PIN && currentY <= MAX_Y_COORD - MAIN_HEIGHT_PIN) {
         pinMain.style.top = currentY + 'px';
       }
     };
 
-    // callback mouseUp
     var mouseUpHandler = function (evtUp) {
       evtUp.preventDefault();
 
