@@ -1,15 +1,13 @@
 'use strict';
 
-window.pin = (function () {
+(function () {
   var WIDTH_PIN = 50; // Ширина пользовательской метки, определяется в CSS
   var HEIGHT_PIN = 70; // Высота пользовательской метки, определяется в CSS
 
   window.main = document.querySelector('main');
-  window.errorTemplate = document.querySelector('#error')
-    .content;
+  window.errorTemplate = document.querySelector('#error').content;
   var fragment = document.createDocumentFragment();
-  var pinTemplate = document.querySelector('#pin')
-    .content;
+  var pinTemplate = document.querySelector('#pin').content;
 
   var getCreatePin = function (pin) {
     var pinElement = pinTemplate.cloneNode(true);
@@ -26,6 +24,7 @@ window.pin = (function () {
     for (var i = 0; i < pins.length; i++) {
       fragment.appendChild(getCreatePin(pins[i]));
     }
+    window.render = fragment;
   };
 
   var successHandler = function (response) {
@@ -41,6 +40,4 @@ window.pin = (function () {
   };
 
   window.backend.load(successHandler, errorHandler);
-
-  return fragment;
 })();

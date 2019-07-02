@@ -23,7 +23,7 @@
     if (!status) {
       map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
-      pinContainer.appendChild(window.pin);
+      pinContainer.appendChild(window.render);
     }
 
     for (var i = 0; i < fieldsets.length; i++) {

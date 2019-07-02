@@ -2,7 +2,7 @@
 
 (function () {
   window.filter = function (data) {
-    var pinContainer = document.querySelector('.map__pins');
+    var pinContainer = document.querySelector('.map__pins'); // Контейнер для всех меток
     var form = document.querySelector('.map__filters');
     var type = form.querySelector('#housing-type');
 
@@ -14,8 +14,8 @@
           return pin.offer.type === 'bungalo';
         });
 
-        console.log(filteredData);
-        return window.getRenderPin(filteredData);
+        window.getRenderPin(filteredData);
+        pinContainer.appendChild(window.render);
       }
     };
 
@@ -23,7 +23,6 @@
       changeTypeHandler(evt.target.value);
     });
 
-    console.log(filteredData);
     return window.getRenderPin(filteredData);
   };
 })();
