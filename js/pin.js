@@ -22,16 +22,18 @@ window.pin = (function () {
     return pinElement;
   };
 
-  var successHandler = function (response) {
-    for (var i = 0; i < response.length; i++) {
-      var currentPin = getCreatePin(response[i]);
-      fragment.appendChild(currentPin);
+  window.getRenderPin = function (pins) {
+    for (var i = 0; i < pins.length; i++) {
+      fragment.appendChild(getCreatePin(pins[i]));
     }
+  };
+
+  var successHandler = function (response) {
+    window.filter(response);
   };
 
   var errorHandler = function (message) {
     var error = window.errorTemplate.cloneNode(true);
-
     error.querySelector('.error__message').textContent = message;
     window.main.appendChild(error);
 
