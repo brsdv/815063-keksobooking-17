@@ -57,7 +57,7 @@
         error('Произошла ошибка соединения');
       });
 
-      xhr.open('POST', 'https://js.dump.academy/keksobooking');
+      xhr.open('POST', 'https://js.dump.academy/keksobooking1');
       xhr.send(data);
     }
   };

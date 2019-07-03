@@ -5,10 +5,12 @@ window.pin = (function () {
   var HEIGHT_PIN = 70; // Высота пользовательской метки, определяется в CSS
 
   window.main = document.querySelector('main');
-  window.errorTemplate = document.querySelector('#error').content;
+  window.successTemplate = document.querySelector('#success').content; // Шаблон успешной отправки данных
+  window.errorTemplate = document.querySelector('#error').content; // Шаблон ошибки
   var fragment = document.createDocumentFragment();
-  var pinTemplate = document.querySelector('#pin').content;
+  var pinTemplate = document.querySelector('#pin').content; // Шаблон пина
 
+  // Создает элементы из шоблона пина
   var createPin = function (pin) {
     var pinElement = pinTemplate.cloneNode(true);
 
@@ -20,6 +22,7 @@ window.pin = (function () {
     return pinElement;
   };
 
+  // Рендерит 5 элементов в Document-fragment
   var renderPin = function (pins) {
     pins.slice(0, 5).forEach(function (pin) {
       fragment.appendChild(createPin(pin));
@@ -28,9 +31,9 @@ window.pin = (function () {
     return fragment;
   };
 
+  // Перерисовывает элементы в DOM'е, кроме главного пина
   window.rebuildPin = function (pins) {
     var pinContainer = document.querySelector('.map__pins');
-
     pinContainer.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {
         pinContainer.removeChild(element);

@@ -68,7 +68,7 @@
     }
   });
 
-  // Колбек для событий по фильтру тип жилья
+  // Колбек события по фильтру тип жилья
   var changeTypeHandler = function (value) {
     if (value !== 'any') {
       var data = window.data.filter(function (pin) {
@@ -85,10 +85,7 @@
   });
 
   var successHandler = function () {
-    var successTemplate = document.querySelector('#success')
-      .content;
-    var successClone = successTemplate.cloneNode(true);
-
+    var successClone = window.successTemplate.cloneNode(true);
     window.main.appendChild(successClone);
   };
 
@@ -98,8 +95,7 @@
     window.main.appendChild(errorClone);
 
     var errorButton = window.main.querySelector('.error');
-    errorButton.addEventListener('click', function (evtClick) {
-      evtClick.preventDefault();
+    errorButton.addEventListener('click', function () {
       window.main.removeChild(errorButton);
 
       submit.disabled = false;
@@ -117,6 +113,6 @@
     submit.disabled = true;
     submit.style.backgroundColor = 'lightgray';
     submit.style.color = 'gray';
-    submit.style.border = 'none';
+    submit.style.border = '4px solid #c5c5c5';
   });
 })();

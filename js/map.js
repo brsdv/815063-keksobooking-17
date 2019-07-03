@@ -13,7 +13,9 @@
   var startCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth); // Середина начальной метки по X
   var startCoordinateY = Math.round(pinMain.offsetTop + pinMainHalfHeight); // Середина начальной метки по Y
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
-  var addressInput = adForm.querySelector('#address');
+  var addressInput = adForm.querySelector('#address'); // Поле "адрес"
+
+  // Задаем стартовые координаты в поле адрес
   addressInput.value = startCoordinateX + ', ' + startCoordinateY;
 
   // Активирует состояние страницы
