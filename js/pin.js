@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+window.pin = (function () {
   var WIDTH_PIN = 50; // Ширина пользовательской метки, определяется в CSS
   var HEIGHT_PIN = 70; // Высота пользовательской метки, определяется в CSS
 
@@ -9,7 +9,7 @@
   var fragment = document.createDocumentFragment();
   var pinTemplate = document.querySelector('#pin').content;
 
-  var getCreatePin = function (pin) {
+  var createPin = function (pin) {
     var pinElement = pinTemplate.cloneNode(true);
 
     pinElement.querySelector('img').src = pin.author.avatar;
@@ -20,15 +20,29 @@
     return pinElement;
   };
 
-  window.getRenderPin = function (pins) {
-    for (var i = 0; i < pins.length; i++) {
-      fragment.appendChild(getCreatePin(pins[i]));
-    }
-    window.render = fragment;
+  var renderPin = function (pins) {
+    pins.slice(0, 5).forEach(function (pin) {
+      fragment.appendChild(createPin(pin));
+    });
+
+    return fragment;
+  };
+
+  window.rebuildPin = function (pins) {
+    var pinContainer = document.querySelector('.map__pins');
+
+    pinContainer.querySelectorAll('button').forEach(function (element) {
+      if (!element.classList.contains('map__pin--main')) {
+        pinContainer.removeChild(element);
+      }
+    });
+
+    pinContainer.appendChild(renderPin(pins));
   };
 
   var successHandler = function (response) {
-    window.filter(response);
+    window.data = response;
+    renderPin(response);
   };
 
   var errorHandler = function (message) {
@@ -40,4 +54,6 @@
   };
 
   window.backend.load(successHandler, errorHandler);
+
+  return fragment;
 })();

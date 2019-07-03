@@ -8,6 +8,8 @@
   var priceInput = adForm.querySelector('#price');
   var timeInSelect = adForm.querySelector('#timein');
   var timeOutSelect = adForm.querySelector('#timeout');
+  var filterForm = document.querySelector('.map__filters'); // Форма фильтров под картой
+  var filterType = filterForm.querySelector('#housing-type');
 
   var changeInputPriceHandler = function (val) {
     if (val === 'bungalo') {
@@ -64,6 +66,22 @@
     } else {
       priceInput.setCustomValidity('');
     }
+  });
+
+  // Колбек для событий по фильтру тип жилья
+  var changeTypeHandler = function (value) {
+    if (value !== 'any') {
+      var data = window.data.filter(function (pin) {
+        return pin.offer.type === value;
+      });
+      window.rebuildPin(data);
+    } else {
+      window.rebuildPin(window.data);
+    }
+  };
+
+  filterType.addEventListener('change', function (evt) {
+    changeTypeHandler(evt.target.value);
   });
 
   var successHandler = function () {
