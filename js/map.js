@@ -45,14 +45,16 @@
     addressInput.value = currentCoordinateX + ', ' + currentCoordinateY;
   };
 
+  var Coordinate = function (x, y) {
+    this.x = x;
+    this.y = y;
+  };
+
   pinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
     pinMain.style.zIndex = 2;
 
-    var startCoordinate = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    var startCoordinate = new Coordinate(evt.clientX, evt.clientY);
 
     var mouseMoveHandler = function (evtMove) {
       evtMove.preventDefault();
@@ -62,15 +64,9 @@
         setStatusPage(false);
       }
 
-      var shift = {
-        x: startCoordinate.x - evtMove.clientX,
-        y: startCoordinate.y - evtMove.clientY
-      };
+      var shift = new Coordinate(startCoordinate.x - evtMove.clientX, startCoordinate.y - evtMove.clientY);
 
-      startCoordinate = {
-        x: evtMove.clientX,
-        y: evtMove.clientY
-      };
+      startCoordinate = new Coordinate(evtMove.clientX, evtMove.clientY);
 
       var currentX = pinMain.offsetLeft - shift.x;
       var currentY = pinMain.offsetTop - shift.y;
