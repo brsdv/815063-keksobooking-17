@@ -46,6 +46,7 @@ window.pin = (function () {
   var successHandler = function (response) {
     window.data = response;
     renderPin(response);
+    window.renderCard(response);
   };
 
   var errorHandler = function (message) {
