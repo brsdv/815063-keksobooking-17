@@ -26,6 +26,7 @@
       map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
       pinContainer.appendChild(window.pin);
+      pinContainer.after(window.card);
     }
 
     for (var i = 0; i < fieldsets.length; i++) {
