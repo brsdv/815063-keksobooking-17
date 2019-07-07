@@ -18,6 +18,20 @@
   // Задаем стартовые координаты в поле адрес
   addressInput.value = startCoordinateX + ', ' + startCoordinateY;
 
+  var viewCard = function (pins) {
+    console.log(pins);
+    var data = window.lastFive;
+    console.log(data);
+
+    for (var i = 0; i < data.length; i++) {
+      pins[i + 1].addEventListener('click', function () {
+        var render = window.renderCard(data[i]);
+        console.log(data[i]);
+        pinContainer.after(render);
+      });
+    }
+  };
+
   // Активирует состояние страницы
   var setStatusPage = function (status) {
     var fieldsets = adForm.querySelectorAll('fieldset');
@@ -26,7 +40,8 @@
       map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
       pinContainer.appendChild(window.pin);
-      pinContainer.after(window.card);
+      viewCard(pinContainer.querySelectorAll('.map__pin'));
+      // pinContainer.after(window.card);
     }
 
     for (var i = 0; i < fieldsets.length; i++) {

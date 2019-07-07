@@ -24,7 +24,9 @@ window.pin = (function () {
 
   // Рендерит 5 элементов в Document-fragment
   var renderPin = function (pins) {
-    pins.slice(0, 5).forEach(function (pin) {
+    window.lastFive = pins.slice(0, 5);
+
+    window.lastFive.forEach(function (pin) {
       fragment.appendChild(createPin(pin));
     });
 
@@ -46,7 +48,6 @@ window.pin = (function () {
   var successHandler = function (response) {
     window.data = response;
     renderPin(response);
-    window.renderCard(response);
   };
 
   var errorHandler = function (message) {
