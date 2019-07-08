@@ -59,7 +59,6 @@ window.card = (function () {
   };
 
   window.renderCard = function (card) {
-    console.log(card);
     fragment.appendChild(createCard(card));
     return fragment;
   };

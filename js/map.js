@@ -5,9 +5,9 @@
   var MAX_Y_COORD = 630; // Максимальная координата Y
   var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
 
-  var map = document.querySelector('.map'); // Секция карты
-  var pinContainer = document.querySelector('.map__pins'); // Контейнер для всех меток
-  var pinMain = pinContainer.querySelector('.map__pin--main'); // Начальная метка
+  window.map = document.querySelector('.map'); // Секция карты
+  window.pinContainer = document.querySelector('.map__pins'); // Контейнер для всех меток
+  var pinMain = window.pinContainer.querySelector('.map__pin--main'); // Начальная метка
   var pinMainHalfWidth = pinMain.offsetWidth / 2; // Середина самой метки по X
   var pinMainHalfHeight = pinMain.offsetHeight / 2; // Середина самой метки по Y
   var startCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth); // Середина начальной метки по X
@@ -18,30 +18,39 @@
   // Задаем стартовые координаты в поле адрес
   addressInput.value = startCoordinateX + ', ' + startCoordinateY;
 
-  var viewCard = function (pins) {
-    console.log(pins);
-    var data = window.lastFive;
-    console.log(data);
+  var сardHandler = function (pin) {
+    var cardElement = window.map.querySelector('article');
 
-    for (var i = 0; i < data.length; i++) {
-      pins[i + 1].addEventListener('click', function () {
-        var render = window.renderCard(data[i]);
-        console.log(data[i]);
-        pinContainer.after(render);
-      });
+    // Если карточка отрисована, удаляем ее
+    if (cardElement !== null) {
+      window.map.removeChild(cardElement);
     }
+
+    window.pinContainer.after(window.renderCard(pin));
   };
 
-  // Активирует состояние страницы
+  // Показываем карточку объявления при клике на пин
+  var openCard = function (data) {
+    window.pinContainer.addEventListener('click', function (evt) {
+      var target = evt.target;
+
+      for (var i = 0; i < data.length; i++) {
+        if (target && parseInt(target.dataset.x, 10) === data[i].location.x) {
+          сardHandler(data[i]);
+        }
+      }
+    });
+  };
+
+  // Активируем состояние страницы
   var setStatusPage = function (status) {
     var fieldsets = adForm.querySelectorAll('fieldset');
 
     if (!status) {
-      map.classList.remove('map--faded');
+      window.map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
-      pinContainer.appendChild(window.pin);
-      viewCard(pinContainer.querySelectorAll('.map__pin'));
-      // pinContainer.after(window.card);
+      window.pinContainer.appendChild(window.pin);
+      openCard(window.data);
     }
 
     for (var i = 0; i < fieldsets.length; i++) {
@@ -54,7 +63,7 @@
   };
   setStatusPage(true);
 
-  // Устанавливает координаты в поле адрес
+  // Устанавливаем координаты в поле адрес
   var setPinCoord = function () {
     var currentCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth);
     var currentCoordinateY = Math.round(pinMain.offsetTop + MAIN_HEIGHT_PIN);
@@ -76,7 +85,7 @@
       evtMove.preventDefault();
 
       // если страница дезактивирована, активируем ее
-      if (map.classList.contains('map--faded')) {
+      if (window.map.classList.contains('map--faded')) {
         setStatusPage(false);
       }
 
@@ -87,7 +96,7 @@
       var currentX = pinMain.offsetLeft - shift.x;
       var currentY = pinMain.offsetTop - shift.y;
 
-      if (currentX >= map.clientLeft - pinMainHalfWidth && currentX <= map.clientWidth - pinMainHalfWidth) {
+      if (currentX >= window.map.clientLeft - pinMainHalfWidth && currentX <= window.map.clientWidth - pinMainHalfWidth) {
         pinMain.style.left = currentX + 'px';
       }
       if (currentY >= MIN_Y_COORD - MAIN_HEIGHT_PIN && currentY <= MAX_Y_COORD - MAIN_HEIGHT_PIN) {
