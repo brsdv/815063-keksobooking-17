@@ -18,7 +18,25 @@
   // Задаем стартовые координаты в поле адрес
   addressInput.value = startCoordinateX + ', ' + startCoordinateY;
 
-  var сardHandler = function (pin) {
+  var keydownHandler = function (evt) {
+    window.util.escKeyEvent(evt, closeCardHandler);
+  };
+
+  var closeCardHandler = function () {
+    window.map.removeChild(window.map.querySelector('article'));
+    document.removeEventListener('keydown', keydownHandler);
+  };
+
+  // Закрываем карточку объявления при клике
+  var closeCard = function () {
+    var closeElement = window.map.querySelector('.popup__close');
+    closeElement.addEventListener('click', function () {
+      closeCardHandler();
+    });
+  };
+
+  // Рендерим карточку объявления
+  var сardRender = function (pin) {
     var cardElement = window.map.querySelector('article');
 
     // Если карточка отрисована, удаляем ее
@@ -27,6 +45,8 @@
     }
 
     window.pinContainer.after(window.renderCard(pin));
+    document.addEventListener('keydown', keydownHandler);
+    closeCard();
   };
 
   // Показываем карточку объявления при клике на пин
@@ -36,7 +56,7 @@
 
       for (var i = 0; i < data.length; i++) {
         if (target && parseInt(target.dataset.x, 10) === data[i].location.x) {
-          сardHandler(data[i]);
+          сardRender(data[i]);
         }
       }
     });
