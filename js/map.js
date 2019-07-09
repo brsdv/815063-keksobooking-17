@@ -53,9 +53,11 @@
   var openCard = function (data) {
     window.pinContainer.addEventListener('click', function (evt) {
       var target = evt.target;
+      var dataX = parseInt(target.dataset.x, 10);
+      var dataY = parseInt(target.dataset.y, 10);
 
       for (var i = 0; i < data.length; i++) {
-        if (target && parseInt(target.dataset.x, 10) === data[i].location.x) {
+        if (dataX === data[i].location.x && dataY === data[i].location.y) {
           сardRender(data[i]);
         }
       }
