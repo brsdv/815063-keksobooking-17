@@ -8,10 +8,59 @@
   var priceInput = adForm.querySelector('#price');
   var timeInSelect = adForm.querySelector('#timein');
   var timeOutSelect = adForm.querySelector('#timeout');
+  var roomNumberSelect = adForm.querySelector('#room_number');
+  var capacitySelect = adForm.querySelector('#capacity');
   var filterForm = document.querySelector('.map__filters'); // Форма фильтров под картой
   var filterType = filterForm.querySelector('#housing-type');
 
-  var changeInputPriceHandler = function (val) {
+  var Value = {
+    ONE: '1',
+    TWO: '2',
+    THREE: '3',
+    ZERO: '0',
+    HUNDRED: '100'
+  };
+
+  var changeRoomHandler = function (value) {
+    var options = Array.from(capacitySelect.querySelectorAll('option'));
+
+    if (value === Value.ONE) {
+      options.filter(function (opt) {
+        opt.disabled = false;
+        return opt.value !== Value.ONE;
+      }).forEach(function (opt) {
+        opt.disabled = true;
+      });
+    } else if (value === Value.TWO) {
+      options.filter(function (opt) {
+        opt.disabled = false;
+        return opt.value !== Value.ONE || opt.value !== Value.TWO;
+      }).forEach(function (opt) {
+        opt.disabled = true;
+      });
+    } else if (value === Value.THREE) {
+      options.filter(function (opt) {
+        opt.disabled = false;
+        return opt.value === Value.ZERO;
+      }).forEach(function (opt) {
+        opt.disabled = true;
+      });
+    } else if (value === Value.HUNDRED) {
+      options.filter(function (opt) {
+        opt.disabled = false;
+        return opt.value !== Value.ZERO;
+      }).forEach(function (opt) {
+        opt.disabled = true;
+      });
+    }
+  };
+
+  roomNumberSelect.addEventListener('change', function (evt) {
+    changeRoomHandler(evt.target.value);
+  });
+
+  // Проверка соответствия типа жилья и цены
+  var changePriceHandler = function (val) {
     if (val === 'bungalo') {
       priceInput.placeholder = 0;
       priceInput.min = 0;
@@ -27,21 +76,22 @@
     }
   };
 
-  var changeSelectTimeHandler = function (opt, index) {
+  // Синхронность полей время заезда и выезда
+  var changeTimeHandler = function (opt, index) {
     opt.selectedOptions[0].selected = false;
     opt.options[index].selected = true;
   };
 
   typeSelect.addEventListener('change', function (evt) {
-    changeInputPriceHandler(evt.target.value);
+    changePriceHandler(evt.target.value);
   });
 
   timeInSelect.addEventListener('change', function (evt) {
-    changeSelectTimeHandler(timeOutSelect, evt.target.selectedIndex);
+    changeTimeHandler(timeOutSelect, evt.target.selectedIndex);
   });
 
   timeOutSelect.addEventListener('change', function (evt) {
-    changeSelectTimeHandler(timeInSelect, evt.target.selectedIndex);
+    changeTimeHandler(timeInSelect, evt.target.selectedIndex);
   });
 
   titleInput.addEventListener('invalid', function (evt) {
@@ -68,8 +118,8 @@
     }
   });
 
-  // Колбек события по фильтру тип жилья
-  var changeTypeHandler = function (value) {
+  // Фильтрация по типу жилья
+  var changeFilterTypeHandler = function (value) {
     if (value !== 'any') {
       var data = window.data.filter(function (pin) {
         return pin.offer.type === value;
@@ -81,7 +131,7 @@
   };
 
   filterType.addEventListener('change', function (evt) {
-    changeTypeHandler(evt.target.value);
+    changeFilterTypeHandler(evt.target.value);
   });
 
   var successHandler = function () {
@@ -105,6 +155,7 @@
     throw new Error(message);
   };
 
+  // Отправка формы на сервер
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
 

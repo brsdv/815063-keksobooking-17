@@ -15,8 +15,7 @@
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var addressInput = adForm.querySelector('#address'); // Поле "адрес"
 
-  // Задаем стартовые координаты в поле адрес
-  addressInput.value = startCoordinateX + ', ' + startCoordinateY;
+  addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
 
   var keydownHandler = function (evt) {
     window.util.escKeyEvent(evt, closeCardHandler);
