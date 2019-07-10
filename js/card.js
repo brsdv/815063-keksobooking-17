@@ -58,11 +58,8 @@ window.card = (function () {
     return cloneNode;
   };
 
-  window.renderCard = function (cards) {
-    cards.slice(0, 1).forEach(function (card) {
-      return fragment.appendChild(createCard(card));
-    });
+  window.renderCard = function (card) {
+    fragment.appendChild(createCard(card));
+    return fragment;
   };
-
-  return fragment;
 })();

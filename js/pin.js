@@ -10,12 +10,14 @@ window.pin = (function () {
   var fragment = document.createDocumentFragment();
   var pinTemplate = document.querySelector('#pin').content; // Шаблон пина
 
-  // Создает элементы из шоблона пина
+  // Создает элементы из шаблона пина
   var createPin = function (pin) {
     var pinElement = pinTemplate.cloneNode(true);
 
     pinElement.querySelector('img').src = pin.author.avatar;
     pinElement.querySelector('img').alt = pin.offer.title;
+    pinElement.querySelector('img').dataset.x = pin.location.x;
+    pinElement.querySelector('img').dataset.y = pin.location.y;
     pinElement.querySelector('.map__pin').style.left = pin.location.x - WIDTH_PIN / 2 + 'px';
     pinElement.querySelector('.map__pin').style.top = pin.location.y - HEIGHT_PIN + 'px';
 
@@ -33,26 +35,30 @@ window.pin = (function () {
 
   // Перерисовывает элементы в DOM'е, кроме главного пина
   window.rebuildPin = function (pins) {
-    var pinContainer = document.querySelector('.map__pins');
-    pinContainer.querySelectorAll('button').forEach(function (element) {
+    window.pinContainer.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {
-        pinContainer.removeChild(element);
+        window.pinContainer.removeChild(element);
       }
     });
 
-    pinContainer.appendChild(renderPin(pins));
+    window.pinContainer.appendChild(renderPin(pins));
   };
 
   var successHandler = function (response) {
     window.data = response;
     renderPin(response);
-    window.renderCard(response);
   };
 
   var errorHandler = function (message) {
     var error = window.errorTemplate.cloneNode(true);
     error.querySelector('.error__message').textContent = message;
     window.main.appendChild(error);
+
+    var errorButton = window.main.querySelector('.error');
+    errorButton.addEventListener('click', function () {
+      window.main.removeChild(errorButton);
+
+    });
 
     throw new Error(message);
   };
