@@ -4,6 +4,7 @@ window.card = (function () {
   var cardTemplate = document.querySelector('#card').content;
   var fragment = document.createDocumentFragment();
 
+  // Словарь соответствия названия помещений и их топом
   var typeMap = {
     'flat': 'Квартира',
     'bungalo': 'Бунгало',
@@ -11,6 +12,7 @@ window.card = (function () {
     'palace': 'Дворец'
   };
 
+  // Словарь соответствия удобств и их классов для разметки
   var featureMap = {
     'wifi': 'popup__feature--wifi',
     'dishwasher': 'popup__feature--dishwasher',
@@ -20,6 +22,7 @@ window.card = (function () {
     'conditioner': 'popup__feature--conditioner'
   };
 
+  // Очищаем элемент от чилдов и создаем новые
   var createFeaturesElement = function (parent, array) {
     parent.textContent = '';
 
@@ -30,6 +33,7 @@ window.card = (function () {
     });
   };
 
+  // Добавляем изображения в карточку из шаблона картинки и удаляем сам шаблон
   var createPhotosElement = function (parent, array) {
     array.forEach(function (element) {
       var img = parent.querySelector('img').cloneNode(true);
@@ -40,6 +44,7 @@ window.card = (function () {
     parent.removeChild(parent.querySelectorAll('img')[0]);
   };
 
+  // Создаем карточку из шаблона
   var createCard = function (card) {
     var cloneNode = cardTemplate.cloneNode(true);
 
@@ -58,8 +63,41 @@ window.card = (function () {
     return cloneNode;
   };
 
+  // Рендерим карточку во Document-fragment
   window.renderCard = function (card) {
     fragment.appendChild(createCard(card));
     return fragment;
+  };
+
+  // Закрытие карточки по клавише ESC
+  var keydownHandler = function (evt) {
+    window.util.escKeyEvent(evt, closeCardHandler);
+  };
+
+  var closeCardHandler = function () {
+    window.map.removeChild(window.map.querySelector('article'));
+    document.removeEventListener('keydown', keydownHandler);
+  };
+
+  // Закрываем карточку объявления при клике
+  var closeCard = function () {
+    var closeElement = window.map.querySelector('.popup__close');
+    closeElement.addEventListener('click', function () {
+      closeCardHandler();
+    });
+  };
+
+  // Рендерим карточку объявления
+  window.openCard = function (pin) {
+    var cardElement = window.map.querySelector('article');
+
+    // Если карточка отрисована, удаляем ее
+    if (cardElement !== null) {
+      window.map.removeChild(cardElement);
+    }
+
+    window.pinContainer.after(window.renderCard(pin));
+    document.addEventListener('keydown', keydownHandler);
+    closeCard();
   };
 })();
