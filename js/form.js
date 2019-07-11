@@ -13,51 +13,21 @@
   var filterForm = document.querySelector('.map__filters'); // Форма фильтров под картой
   var filterType = filterForm.querySelector('#housing-type');
 
-  var Value = {
-    ONE: '1',
-    TWO: '2',
-    THREE: '3',
-    ZERO: '0',
-    HUNDRED: '100'
+  // Словарь соответствия опций кол-во комнат к количеству мест
+  var CapacityProperty = {
+    '1': '1',
+    '2': '2',
+    '3': '3',
+    '100': '0'
   };
 
-  var changeRoomHandler = function (value) {
-    var options = Array.from(capacitySelect.querySelectorAll('option'));
-
-    if (value === Value.ONE) {
-      options.filter(function (opt) {
-        opt.disabled = false;
-        return opt.value !== Value.ONE;
-      }).forEach(function (opt) {
-        opt.disabled = true;
-      });
-    } else if (value === Value.TWO) {
-      options.filter(function (opt) {
-        opt.disabled = false;
-        return opt.value !== Value.ONE || opt.value !== Value.TWO;
-      }).forEach(function (opt) {
-        opt.disabled = true;
-      });
-    } else if (value === Value.THREE) {
-      options.filter(function (opt) {
-        opt.disabled = false;
-        return opt.value === Value.ZERO;
-      }).forEach(function (opt) {
-        opt.disabled = true;
-      });
-    } else if (value === Value.HUNDRED) {
-      options.filter(function (opt) {
-        opt.disabled = false;
-        return opt.value !== Value.ZERO;
-      }).forEach(function (opt) {
-        opt.disabled = true;
-      });
-    }
+  // Словарь ограничения опций кол-ва мест по выбранным опциям кол-во комнат
+  var CapacityDisable = {
+    '1': ['0', '2', '3'],
+    '2': ['0', '3'],
+    '3': ['0'],
+    '100': ['1', '2', '3']
   };
-
-  roomNumberSelect.addEventListener('change', function (evt) {
-    changeRoomHandler(evt.target.value);
-  });
 
   // Проверка соответствия типа жилья и цены
   var changePriceHandler = function (val) {
@@ -82,6 +52,19 @@
     opt.options[index].selected = true;
   };
 
+  // Синхронность полей кол-во комнат и кол-во мест с ограничениями из словарей
+  var changeRoomHandler = function (val) {
+    capacitySelect.value = CapacityProperty[val];
+
+    Array.from(capacitySelect).forEach(function (option) {
+      option.disabled = false;
+    });
+
+    CapacityDisable[val].forEach(function (value) {
+      capacitySelect.querySelector('option[value="' + value + '"]').disabled = true;
+    });
+  };
+
   typeSelect.addEventListener('change', function (evt) {
     changePriceHandler(evt.target.value);
   });
@@ -92,6 +75,10 @@
 
   timeOutSelect.addEventListener('change', function (evt) {
     changeTimeHandler(timeInSelect, evt.target.selectedIndex);
+  });
+
+  roomNumberSelect.addEventListener('change', function (evt) {
+    changeRoomHandler(evt.target.value);
   });
 
   titleInput.addEventListener('invalid', function (evt) {
@@ -134,11 +121,13 @@
     changeFilterTypeHandler(evt.target.value);
   });
 
+  // Информирование об успешной отправки формы на сервер
   var successHandler = function () {
     var successClone = window.successTemplate.cloneNode(true);
     window.main.appendChild(successClone);
   };
 
+  // Ошибка при отправки формы на сервер
   var errorHandler = function (message) {
     var errorClone = window.errorTemplate.cloneNode(true);
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
