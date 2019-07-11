@@ -17,52 +17,6 @@
 
   addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
 
-  var keydownHandler = function (evt) {
-    window.util.escKeyEvent(evt, closeCardHandler);
-  };
-
-  var closeCardHandler = function () {
-    window.map.removeChild(window.map.querySelector('article'));
-    document.removeEventListener('keydown', keydownHandler);
-  };
-
-  // Закрываем карточку объявления при клике
-  var closeCard = function () {
-    var closeElement = window.map.querySelector('.popup__close');
-    closeElement.addEventListener('click', function () {
-      closeCardHandler();
-    });
-  };
-
-  // Рендерим карточку объявления
-  var сardRender = function (pin) {
-    var cardElement = window.map.querySelector('article');
-
-    // Если карточка отрисована, удаляем ее
-    if (cardElement !== null) {
-      window.map.removeChild(cardElement);
-    }
-
-    window.pinContainer.after(window.renderCard(pin));
-    document.addEventListener('keydown', keydownHandler);
-    closeCard();
-  };
-
-  // Показываем карточку объявления при клике на пин
-  var openCard = function (data) {
-    window.pinContainer.addEventListener('click', function (evt) {
-      var target = evt.target;
-      var dataX = parseInt(target.dataset.x, 10);
-      var dataY = parseInt(target.dataset.y, 10);
-
-      for (var i = 0; i < data.length; i++) {
-        if (dataX === data[i].location.x && dataY === data[i].location.y) {
-          сardRender(data[i]);
-        }
-      }
-    });
-  };
-
   // Активируем состояние страницы
   var setStatusPage = function (status) {
     var fieldsets = adForm.querySelectorAll('fieldset');
@@ -71,7 +25,20 @@
       window.map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
       window.pinContainer.appendChild(window.pin);
-      openCard(window.data);
+
+      window.pinContainer.addEventListener('click', function (evt) {
+        var target = evt.target;
+        var data = window.data;
+        var dataX = parseInt(target.dataset.x, 10);
+        var dataY = parseInt(target.dataset.y, 10);
+
+        for (var i = 0; i < data.length; i++) {
+          // Ловим клик по координатам X, Y и отрисовываем карточку
+          if (dataX === data[i].location.x && dataY === data[i].location.y) {
+            window.openCard(data[i]);
+          }
+        }
+      });
     }
 
     for (var i = 0; i < fieldsets.length; i++) {
@@ -91,6 +58,7 @@
     addressInput.value = currentCoordinateX + ', ' + currentCoordinateY;
   };
 
+  // Функция-конструктор для вычисления координат
   var Coordinate = function (x, y) {
     this.x = x;
     this.y = y;

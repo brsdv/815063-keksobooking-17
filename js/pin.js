@@ -63,6 +63,7 @@ window.pin = (function () {
     throw new Error(message);
   };
 
+  // Загрузка данных с сервера с обработкой ошибок
   window.backend.load(successHandler, errorHandler);
 
   return fragment;
