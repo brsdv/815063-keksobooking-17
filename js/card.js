@@ -1,6 +1,6 @@
 'use strict';
 
-window.card = (function () {
+(function () {
   var cardTemplate = document.querySelector('#card').content;
   var fragment = document.createDocumentFragment();
 
@@ -96,7 +96,7 @@ window.card = (function () {
       window.map.removeChild(cardElement);
     }
 
-    window.pinContainer.after(window.renderCard(pin));
+    window.mapPins.after(window.renderCard(pin));
     document.addEventListener('keydown', keydownHandler);
     closeCard();
   };

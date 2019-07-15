@@ -6,8 +6,8 @@
   var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
 
   window.map = document.querySelector('.map'); // Секция карты
-  window.pinContainer = document.querySelector('.map__pins'); // Контейнер для всех меток
-  var pinMain = window.pinContainer.querySelector('.map__pin--main'); // Начальная метка
+  window.mapPins = document.querySelector('.map__pins'); // Контейнер для всех меток
+  var pinMain = window.mapPins.querySelector('.map__pin--main'); // Начальная метка
   var pinMainHalfWidth = pinMain.offsetWidth / 2; // Середина самой метки по X
   var pinMainHalfHeight = pinMain.offsetHeight / 2; // Середина самой метки по Y
   var startCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth); // Середина начальной метки по X
@@ -17,28 +17,45 @@
 
   addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
 
+  var successHandler = function (response) {
+    window.data = response;
+    window.mapPins.appendChild(window.renderPin(response));
+
+    window.mapPins.addEventListener('click', function (evt) {
+      var target = evt.target;
+      var dataX = parseInt(target.dataset.x, 10);
+      var dataY = parseInt(target.dataset.y, 10);
+
+      for (var i = 0; i < response.length; i++) {
+        // Ловим клик по координатам X, Y и отрисовываем карточку
+        if (dataX === response[i].location.x && dataY === response[i].location.y) {
+          window.openCard(response[i]);
+        }
+      }
+    });
+  };
+
+  var errorHandler = function (message) {
+    var error = window.errorTemplate.cloneNode(true);
+    error.querySelector('.error__message').textContent = message;
+    window.main.appendChild(error);
+
+    var errorButton = window.main.querySelector('.error');
+    errorButton.addEventListener('click', function () {
+      window.main.removeChild(errorButton);
+    });
+
+    throw new Error(message);
+  };
+
   // Активируем состояние страницы
   var setStatusPage = function (status) {
     var fieldsets = adForm.querySelectorAll('fieldset');
 
     if (!status) {
+      window.backend.load(successHandler, errorHandler); // Загрузка данных с сервера с обработкой ошибок
       window.map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
-      window.pinContainer.appendChild(window.pin);
-
-      window.pinContainer.addEventListener('click', function (evt) {
-        var target = evt.target;
-        var data = window.data;
-        var dataX = parseInt(target.dataset.x, 10);
-        var dataY = parseInt(target.dataset.y, 10);
-
-        for (var i = 0; i < data.length; i++) {
-          // Ловим клик по координатам X, Y и отрисовываем карточку
-          if (dataX === data[i].location.x && dataY === data[i].location.y) {
-            window.openCard(data[i]);
-          }
-        }
-      });
     }
 
     for (var i = 0; i < fieldsets.length; i++) {

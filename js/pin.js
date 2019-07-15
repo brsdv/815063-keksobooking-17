@@ -1,12 +1,9 @@
 'use strict';
 
-window.pin = (function () {
+(function () {
   var WIDTH_PIN = 50; // Ширина пользовательской метки, определяется в CSS
   var HEIGHT_PIN = 70; // Высота пользовательской метки, определяется в CSS
 
-  window.main = document.querySelector('main');
-  window.successTemplate = document.querySelector('#success').content; // Шаблон успешной отправки данных
-  window.errorTemplate = document.querySelector('#error').content; // Шаблон ошибки
   var fragment = document.createDocumentFragment();
   var pinTemplate = document.querySelector('#pin').content; // Шаблон пина
 
@@ -25,7 +22,7 @@ window.pin = (function () {
   };
 
   // Рендерит 5 элементов в Document-fragment
-  var renderPin = function (pins) {
+  window.renderPin = function (pins) {
     pins.slice(0, 5).forEach(function (pin) {
       fragment.appendChild(createPin(pin));
     });
@@ -35,36 +32,12 @@ window.pin = (function () {
 
   // Перерисовывает элементы в DOM'е, кроме главного пина
   window.rebuildPin = function (pins) {
-    window.pinContainer.querySelectorAll('button').forEach(function (element) {
+    window.mapPins.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {
-        window.pinContainer.removeChild(element);
+        window.mapPins.removeChild(element);
       }
     });
 
-    window.pinContainer.appendChild(renderPin(pins));
+    window.mapPins.appendChild(window.renderPin(pins));
   };
-
-  var successHandler = function (response) {
-    window.data = response;
-    renderPin(response);
-  };
-
-  var errorHandler = function (message) {
-    var error = window.errorTemplate.cloneNode(true);
-    error.querySelector('.error__message').textContent = message;
-    window.main.appendChild(error);
-
-    var errorButton = window.main.querySelector('.error');
-    errorButton.addEventListener('click', function () {
-      window.main.removeChild(errorButton);
-
-    });
-
-    throw new Error(message);
-  };
-
-  // Загрузка данных с сервера с обработкой ошибок
-  window.backend.load(successHandler, errorHandler);
-
-  return fragment;
 })();
