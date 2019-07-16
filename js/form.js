@@ -129,9 +129,8 @@
   };
 
   // Закрытие поп-апа
-  var closePopup = function (element) {
-    console.log(element);
-    window.main.removeChild(element);
+  var closePopup = function () {
+    window.removeElement();
     submit.disabled = false;
     submit.removeAttribute('style');
     document.removeEventListener('keydown', keydownPopupHandler);
@@ -144,8 +143,13 @@
 
     var success = window.main.querySelector('.success');
     success.addEventListener('click', function () {
-      closePopup(success);
+      closePopup();
     });
+
+    window.removeElement = function () {
+      return window.main.removeChild(success);
+    };
+
     document.addEventListener('keydown', keydownPopupHandler);
   };
 
@@ -155,11 +159,16 @@
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
     window.main.appendChild(errorClone);
 
-    window.main.querySelector('.error').addEventListener('click', function () {
+    var error = window.main.querySelector('.error');
+    error.addEventListener('click', function () {
       closePopup();
     });
-    document.addEventListener('keydown', keydownPopupHandler);
 
+    window.removeElement = function () {
+      return window.main.removeChild(error);
+    };
+
+    document.addEventListener('keydown', keydownPopupHandler);
     throw new Error(message);
   };
 
