@@ -69,6 +69,15 @@
     return fragment;
   };
 
+  window.removeCard = function () {
+    var cardPopup = window.map.querySelector('article');
+
+    if (cardPopup !== null) {
+      window.map.removeChild(cardPopup);
+      document.removeEventListener('keydown', keydownHandler);
+    }
+  };
+
   // Закрытие карточки по клавише ESC
   var keydownHandler = function (evt) {
     window.util.escKeyEvent(evt, closeCardHandler);

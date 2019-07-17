@@ -130,7 +130,7 @@
 
   // Закрытие поп-апа
   var closePopup = function () {
-    window.removeElement();
+    window.main.removeChild(window.currentPopup);
     submit.disabled = false;
     submit.removeAttribute('style');
     document.removeEventListener('keydown', keydownPopupHandler);
@@ -138,17 +138,14 @@
 
   // Успешная отправка формы на сервер
   var successHandler = function () {
+    window.setStatusPage(true);
     var successClone = window.successTemplate.cloneNode(true);
     window.main.appendChild(successClone);
 
-    var success = window.main.querySelector('.success');
-    success.addEventListener('click', function () {
+    window.currentPopup = window.main.querySelector('.success');
+    window.currentPopup.addEventListener('click', function () {
       closePopup();
     });
-
-    window.removeElement = function () {
-      return window.main.removeChild(success);
-    };
 
     document.addEventListener('keydown', keydownPopupHandler);
   };
@@ -159,14 +156,10 @@
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
     window.main.appendChild(errorClone);
 
-    var error = window.main.querySelector('.error');
-    error.addEventListener('click', function () {
+    window.currentPopup = window.main.querySelector('.error');
+    window.currentPopup.addEventListener('click', function () {
       closePopup();
     });
-
-    window.removeElement = function () {
-      return window.main.removeChild(error);
-    };
 
     document.addEventListener('keydown', keydownPopupHandler);
     throw new Error(message);

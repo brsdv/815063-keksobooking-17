@@ -40,4 +40,12 @@
 
     window.mapPins.appendChild(window.renderPin(pins));
   };
+
+  window.removePin = function () {
+    window.mapPins.querySelectorAll('button').forEach(function (element) {
+      if (!element.classList.contains('map__pin--main')) {
+        window.mapPins.removeChild(element);
+      }
+    });
+  };
 })();
