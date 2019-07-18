@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  window.main = document.querySelector('main');
+  window.successTemplate = document.querySelector('#success').content; // Шаблон успешной отправки данных
+  window.errorTemplate = document.querySelector('#error').content; // Шаблон ошибки
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var submit = adForm.querySelector('.ad-form__submit');
   var titleInput = adForm.querySelector('#title');
@@ -121,26 +124,44 @@
     changeFilterTypeHandler(evt.target.value);
   });
 
-  // Информирование об успешной отправки формы на сервер
-  var successHandler = function () {
-    var successClone = window.successTemplate.cloneNode(true);
-    window.main.appendChild(successClone);
+  var keydownPopupHandler = function (evt) {
+    window.util.escKeyEvent(evt, closePopup);
   };
 
-  // Ошибка при отправки формы на сервер
+  // Закрытие поп-апа
+  var closePopup = function () {
+    window.main.removeChild(window.currentPopup);
+    submit.disabled = false;
+    submit.removeAttribute('style');
+    document.removeEventListener('keydown', keydownPopupHandler);
+  };
+
+  // Успешная отправка формы
+  var successHandler = function () {
+    window.setStatusPage(true);
+    var successClone = window.successTemplate.cloneNode(true);
+    window.main.appendChild(successClone);
+
+    window.currentPopup = window.main.querySelector('.success');
+    window.currentPopup.addEventListener('click', function () {
+      closePopup();
+    });
+
+    document.addEventListener('keydown', keydownPopupHandler);
+  };
+
+  // Ошибка при отправки формы
   var errorHandler = function (message) {
     var errorClone = window.errorTemplate.cloneNode(true);
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
     window.main.appendChild(errorClone);
 
-    var errorButton = window.main.querySelector('.error');
-    errorButton.addEventListener('click', function () {
-      window.main.removeChild(errorButton);
-
-      submit.disabled = false;
-      submit.removeAttribute('style');
+    window.currentPopup = window.main.querySelector('.error');
+    window.currentPopup.addEventListener('click', function () {
+      closePopup();
     });
 
+    document.addEventListener('keydown', keydownPopupHandler);
     throw new Error(message);
   };
 

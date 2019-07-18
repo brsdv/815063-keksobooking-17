@@ -1,6 +1,6 @@
 'use strict';
 
-window.card = (function () {
+(function () {
   var cardTemplate = document.querySelector('#card').content;
   var fragment = document.createDocumentFragment();
 
@@ -63,10 +63,20 @@ window.card = (function () {
     return cloneNode;
   };
 
-  // Рендерим карточку во Document-fragment
+  // Рендерим карточку в Document-fragment
   window.renderCard = function (card) {
     fragment.appendChild(createCard(card));
     return fragment;
+  };
+
+  // Удаляем карточку если она есть в DOM дереве и обработчик клавишы ESC
+  window.removeCard = function () {
+    var cardPopup = window.map.querySelector('article');
+
+    if (cardPopup !== null) {
+      window.map.removeChild(cardPopup);
+      document.removeEventListener('keydown', keydownHandler);
+    }
   };
 
   // Закрытие карточки по клавише ESC
@@ -96,7 +106,7 @@ window.card = (function () {
       window.map.removeChild(cardElement);
     }
 
-    window.pinContainer.after(window.renderCard(pin));
+    window.mapPins.after(window.renderCard(pin));
     document.addEventListener('keydown', keydownHandler);
     closeCard();
   };
