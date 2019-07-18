@@ -136,7 +136,7 @@
     document.removeEventListener('keydown', keydownPopupHandler);
   };
 
-  // Успешная отправка формы на сервер
+  // Успешная отправка формы
   var successHandler = function () {
     window.setStatusPage(true);
     var successClone = window.successTemplate.cloneNode(true);
@@ -150,7 +150,7 @@
     document.addEventListener('keydown', keydownPopupHandler);
   };
 
-  // Ошибка при отправки формы на сервер
+  // Ошибка при отправки формы
   var errorHandler = function (message) {
     var errorClone = window.errorTemplate.cloneNode(true);
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;

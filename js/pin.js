@@ -41,6 +41,7 @@
     window.mapPins.appendChild(window.renderPin(pins));
   };
 
+  // Удаляем все пользовательские пины которые есть в DOM дереве кроме основного пина
   window.removePin = function () {
     window.mapPins.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {

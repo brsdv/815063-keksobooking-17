@@ -63,12 +63,13 @@
     return cloneNode;
   };
 
-  // Рендерим карточку во Document-fragment
+  // Рендерим карточку в Document-fragment
   window.renderCard = function (card) {
     fragment.appendChild(createCard(card));
     return fragment;
   };
 
+  // Удаляем карточку если она есть в DOM дереве и обработчик клавишы ESC
   window.removeCard = function () {
     var cardPopup = window.map.querySelector('article');
 

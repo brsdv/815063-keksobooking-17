@@ -10,6 +10,8 @@
   var pinMain = window.mapPins.querySelector('.map__pin--main'); // Начальная метка
   var pinMainHalfWidth = pinMain.offsetWidth / 2; // Середина самой метки по X
   var pinMainHalfHeight = pinMain.offsetHeight / 2; // Середина самой метки по Y
+  var startCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth); // Середина начальной метки по X
+  var startCoordinateY = Math.round(pinMain.offsetTop + pinMainHalfHeight); // Середина начальной метки по Y
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var addressInput = adForm.querySelector('#address'); // Поле "адрес"
 
@@ -46,10 +48,10 @@
 
   // Активируем состояние страницы
   window.setStatusPage = function (status) {
-    var startCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth); // Середина начальной метки по X
-    var startCoordinateY = Math.round(pinMain.offsetTop + pinMainHalfHeight); // Середина начальной метки по Y
+    document.querySelector('.ad-form').reset();
+    pinMain.style.left = Math.floor(startCoordinateX - pinMainHalfWidth) + 'px'; // Возвращаем метку в стартовое положение координаты X
+    pinMain.style.top = Math.floor(startCoordinateY - pinMainHalfHeight) + 'px'; // Возвращаем метку в стартовое положение координаты Y
     addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
-    console.log(addressInput.value);
 
     var fieldsets = adForm.querySelectorAll('fieldset');
     fieldsets.forEach(function (element) {
