@@ -7,7 +7,7 @@
   var fragment = document.createDocumentFragment();
   var pinTemplate = document.querySelector('#pin').content; // Шаблон пина
 
-  // Создает элементы из шаблона пина
+  // Создаем элементы из шаблона пина
   var createPin = function (pin) {
     var pinElement = pinTemplate.cloneNode(true);
 
@@ -21,7 +21,7 @@
     return pinElement;
   };
 
-  // Рендерит 5 элементов в Document-fragment
+  // Рендерим 5 элементов в Document-fragment
   window.renderPin = function (pins) {
     pins.slice(0, 5).forEach(function (pin) {
       fragment.appendChild(createPin(pin));
@@ -30,7 +30,7 @@
     return fragment;
   };
 
-  // Перерисовывает элементы в DOM'е, кроме главного пина
+  // Перерисовываем элементы в DOM'е, кроме главного пина
   window.rebuildPin = function (pins) {
     window.mapPins.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {

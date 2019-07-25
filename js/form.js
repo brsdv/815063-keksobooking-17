@@ -13,8 +13,6 @@
   var timeOutSelect = adForm.querySelector('#timeout');
   var roomNumberSelect = adForm.querySelector('#room_number');
   var capacitySelect = adForm.querySelector('#capacity');
-  var filterForm = document.querySelector('.map__filters'); // Форма фильтров под картой
-  var filterType = filterForm.querySelector('#housing-type');
 
   // Словарь соответствия опций кол-во комнат к количеству мест
   var CapacityProperty = {
@@ -106,22 +104,6 @@
     } else {
       priceInput.setCustomValidity('');
     }
-  });
-
-  // Фильтрация по типу жилья
-  var changeFilterTypeHandler = function (value) {
-    if (value !== 'any') {
-      var data = window.data.filter(function (pin) {
-        return pin.offer.type === value;
-      });
-      window.rebuildPin(data);
-    } else {
-      window.rebuildPin(window.data);
-    }
-  };
-
-  filterType.addEventListener('change', function (evt) {
-    changeFilterTypeHandler(evt.target.value);
   });
 
   var keydownPopupHandler = function (evt) {

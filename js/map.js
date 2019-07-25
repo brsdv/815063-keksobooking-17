@@ -7,6 +7,7 @@
 
   window.map = document.querySelector('.map'); // Секция карты
   window.mapPins = document.querySelector('.map__pins'); // Контейнер для всех меток
+  var filters = document.querySelector('.map__filters'); // Форма всех фильтров на карте
   var pinMain = window.mapPins.querySelector('.map__pin--main'); // Начальная метка
   var pinMainHalfWidth = pinMain.offsetWidth / 2; // Середина самой метки по X
   var pinMainHalfHeight = pinMain.offsetHeight / 2; // Середина самой метки по Y
@@ -15,9 +16,15 @@
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var addressInput = adForm.querySelector('#address'); // Поле "адрес"
 
+  var filterChangeHandler = function () {
+    window.rebuildPin(window.filterPin(window.data));
+  };
+
   var successHandler = function (response) {
     window.data = response;
     window.mapPins.appendChild(window.renderPin(response));
+
+    filters.addEventListener('change', filterChangeHandler);
 
     window.mapPins.addEventListener('click', function (evt) {
       var target = evt.target;

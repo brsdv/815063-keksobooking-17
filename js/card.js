@@ -79,7 +79,7 @@
     }
   };
 
-  // Закрытие карточки по клавише ESC
+  // Закрываем карточку по клавише ESC
   var keydownHandler = function (evt) {
     window.util.escKeyEvent(evt, closeCardHandler);
   };
