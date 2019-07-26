@@ -79,12 +79,13 @@
     }
   };
 
-  // Закрытие карточки по клавише ESC
+  // Закрываем карточку по клавише ESC
   var keydownHandler = function (evt) {
     window.util.escKeyEvent(evt, closeCardHandler);
   };
 
   var closeCardHandler = function () {
+    window.removeClassActive();
     window.map.removeChild(window.map.querySelector('article'));
     document.removeEventListener('keydown', keydownHandler);
   };
