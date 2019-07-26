@@ -7,7 +7,7 @@
 
   window.map = document.querySelector('.map'); // Секция карты
   window.mapPins = document.querySelector('.map__pins'); // Контейнер для всех меток
-  var filters = document.querySelector('.map__filters'); // Форма всех фильтров на карте
+  var filterForm = document.querySelector('.map__filters'); // Форма всех фильтров на карте
   var pinMain = window.mapPins.querySelector('.map__pin--main'); // Начальная метка
   var pinMainHalfWidth = pinMain.offsetWidth / 2; // Середина самой метки по X
   var pinMainHalfHeight = pinMain.offsetHeight / 2; // Середина самой метки по Y
@@ -16,15 +16,25 @@
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var addressInput = adForm.querySelector('#address'); // Поле "адрес"
 
+  // Перерисовываем пины по выбранным фильтрам с тайм-аутом в пол секунды
   var filterChangeHandler = function () {
-    window.rebuildPin(window.filterPin(window.data));
+    var lastTimeout;
+
+    if (lastTimeout) {
+      clearTimeout(lastTimeout);
+    }
+
+    lastTimeout = setTimeout(function () {
+      window.removeCard();
+      window.rebuildPin(window.filterPin(window.data));
+    }, 500);
   };
 
   var successHandler = function (response) {
-    window.data = response;
-    window.mapPins.appendChild(window.renderPin(response));
+    window.data = response; // Записываем данные полученные с сервера в глобальную переменную
+    window.mapPins.appendChild(window.renderPin(response)); // Отрисовываем пины
 
-    filters.addEventListener('change', filterChangeHandler);
+    filterForm.addEventListener('change', filterChangeHandler);
 
     window.mapPins.addEventListener('click', function (evt) {
       var target = evt.target;
@@ -34,6 +44,7 @@
       for (var i = 0; i < response.length; i++) {
         // Ловим клик по координатам X, Y и отрисовываем карточку
         if (dataX === response[i].location.x && dataY === response[i].location.y) {
+          window.setClassActive(target);
           window.openCard(response[i]);
         }
       }
@@ -55,24 +66,26 @@
 
   // Активируем состояние страницы
   window.setStatusPage = function (status) {
-    document.querySelector('.ad-form').reset();
+    var fieldsets = adForm.querySelectorAll('fieldset');
+    var filters = filterForm.querySelectorAll('select');
+
+    window.util.disabledForm(fieldsets, status); // Дизейблим все поля формы объявления
+    window.util.disabledForm(filters, status); // Дизейблим все поля формы фильтрации
+
+    document.querySelector('.ad-form').reset(); // Сбрасываем форму подачи объявления
+    filterForm.reset(); // Сбрасываем форму фильтрации
     pinMain.style.left = Math.floor(startCoordinateX - pinMainHalfWidth) + 'px'; // Возвращаем метку в стартовое положение координаты X
     pinMain.style.top = Math.floor(startCoordinateY - pinMainHalfHeight) + 'px'; // Возвращаем метку в стартовое положение координаты Y
     addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
+    adForm.querySelector('#price').placeholder = 1000; // Возвращаем плейсхолдер цены в начальное состояние
 
-    var fieldsets = adForm.querySelectorAll('fieldset');
-    fieldsets.forEach(function (element) {
-      element.disabled = status;
-      if (!status) {
-        element.removeAttribute('disabled');
-      }
-    });
-
+    // Переводим страницу в неактивное состояние если true, иначе активируем страницу
     if (status) {
       window.map.classList.add('map--faded');
       adForm.classList.add('ad-form--disabled');
       window.removeCard();
       window.removePin();
+      filterForm.removeEventListener('change', filterChangeHandler);
     } else {
       window.backend.load(successHandler, errorHandler); // Загрузка данных с сервера с обработкой ошибок
       window.map.classList.remove('map--faded');

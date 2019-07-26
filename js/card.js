@@ -85,6 +85,7 @@
   };
 
   var closeCardHandler = function () {
+    window.removeClassActive();
     window.map.removeChild(window.map.querySelector('article'));
     document.removeEventListener('keydown', keydownHandler);
   };

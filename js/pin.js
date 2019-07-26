@@ -15,6 +15,8 @@
     pinElement.querySelector('img').alt = pin.offer.title;
     pinElement.querySelector('img').dataset.x = pin.location.x;
     pinElement.querySelector('img').dataset.y = pin.location.y;
+    pinElement.querySelector('button').dataset.x = pin.location.x;
+    pinElement.querySelector('button').dataset.y = pin.location.y;
     pinElement.querySelector('.map__pin').style.left = pin.location.x - WIDTH_PIN / 2 + 'px';
     pinElement.querySelector('.map__pin').style.top = pin.location.y - HEIGHT_PIN + 'px';
 
@@ -39,6 +41,26 @@
     });
 
     window.mapPins.appendChild(window.renderPin(pins));
+  };
+
+  // Удаляем активный класс у кнопки пина
+  window.removeClassActive = function () {
+    var pinActive = window.mapPins.querySelector('.map__pin--active');
+
+    if (pinActive !== null) {
+      pinActive.classList.remove('map__pin--active');
+    }
+  };
+
+  // Устанавливаем активный класс кнопке и изображению текущего пина
+  window.setClassActive = function (target) {
+    window.removeClassActive();
+
+    if (target.className === 'map__pin') {
+      target.classList.add('map__pin--active');
+    } else if (target.tagName === 'IMG') {
+      target.parentElement.classList.add('map__pin--active');
+    }
   };
 
   // Удаляем все пользовательские пины которые есть в DOM дереве кроме основного пина
