@@ -15,7 +15,7 @@
   var capacitySelect = adForm.querySelector('#capacity');
 
   // Словарь соответствия опций кол-во комнат к количеству мест
-  var CapacityProperty = {
+  var CapacityPropertyMap = {
     '1': '1',
     '2': '2',
     '3': '3',
@@ -23,7 +23,7 @@
   };
 
   // Словарь ограничения опций кол-ва мест по выбранным опциям кол-во комнат
-  var CapacityDisable = {
+  var CapacityDisableMap = {
     '1': ['0', '2', '3'],
     '2': ['0', '3'],
     '3': ['0'],
@@ -55,13 +55,13 @@
 
   // Синхронность полей кол-во комнат и кол-во мест с ограничениями из словарей
   var changeRoomHandler = function (val) {
-    capacitySelect.value = CapacityProperty[val];
+    capacitySelect.value = CapacityPropertyMap[val];
 
     Array.from(capacitySelect).forEach(function (option) {
       option.disabled = false;
     });
 
-    CapacityDisable[val].forEach(function (value) {
+    CapacityDisableMap[val].forEach(function (value) {
       capacitySelect.querySelector('option[value="' + value + '"]').disabled = true;
     });
   };
@@ -104,6 +104,17 @@
     } else {
       priceInput.setCustomValidity('');
     }
+  });
+
+  submit.addEventListener('click', function () {
+    var input = adForm.querySelectorAll('input');
+
+    input.forEach(function (element) {
+      element.style = '';
+      if (element.validity.valid === false) {
+        element.style.boxShadow = '0 0 2px 2px #ff0000';
+      }
+    });
   });
 
   var keydownPopupHandler = function (evt) {
