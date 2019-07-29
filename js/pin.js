@@ -5,7 +5,7 @@
   var HEIGHT_PIN = 70; // Высота пользовательской метки, определяется в CSS
 
   var fragment = document.createDocumentFragment();
-  var pinTemplate = document.querySelector('#pin').content; // Шаблон пина
+  var pinTemplate = document.querySelector('#pin').content;
 
   // Создаем элементы из шаблона пина
   var createPin = function (pin) {
@@ -24,8 +24,8 @@
   };
 
   // Рендерим 5 элементов в Document-fragment
-  window.renderPin = function (pins) {
-    pins.slice(0, 5).forEach(function (pin) {
+  var renderPin = function (data) {
+    data.slice(0, 5).forEach(function (pin) {
       fragment.appendChild(createPin(pin));
     });
 
@@ -33,19 +33,19 @@
   };
 
   // Перерисовываем элементы в DOM'е, кроме главного пина
-  window.rebuildPin = function (pins) {
-    window.mapPins.querySelectorAll('button').forEach(function (element) {
+  var rebuildPin = function (pins) {
+    window.map.mapContainer.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {
-        window.mapPins.removeChild(element);
+        window.map.mapContainer.removeChild(element);
       }
     });
 
-    window.mapPins.appendChild(window.renderPin(pins));
+    window.map.mapContainer.appendChild(renderPin(pins));
   };
 
   // Удаляем активный класс у кнопки пина
-  window.removeClassActive = function () {
-    var pinActive = window.mapPins.querySelector('.map__pin--active');
+  var removeClassActive = function () {
+    var pinActive = document.querySelector('.map__pin--active');
 
     if (pinActive !== null) {
       pinActive.classList.remove('map__pin--active');
@@ -53,8 +53,8 @@
   };
 
   // Устанавливаем активный класс кнопке и изображению текущего пина
-  window.setClassActive = function (target) {
-    window.removeClassActive();
+  var setClassActive = function (target) {
+    removeClassActive();
 
     if (target.className === 'map__pin') {
       target.classList.add('map__pin--active');
@@ -64,11 +64,19 @@
   };
 
   // Удаляем все пользовательские пины которые есть в DOM дереве кроме основного пина
-  window.removePin = function () {
-    window.mapPins.querySelectorAll('button').forEach(function (element) {
+  var removePin = function () {
+    document.querySelector('.map__pins').querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {
-        window.mapPins.removeChild(element);
+        document.querySelector('.map__pins').removeChild(element);
       }
     });
+  };
+
+  window.pin = {
+    renderPin: renderPin,
+    rebuildPin: rebuildPin,
+    removeClassActive: removeClassActive,
+    setClassActive: setClassActive,
+    removePin: removePin
   };
 })();

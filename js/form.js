@@ -1,11 +1,10 @@
 'use strict';
 
 (function () {
-  window.main = document.querySelector('main');
-  window.successTemplate = document.querySelector('#success').content; // Шаблон успешной отправки данных
-  window.errorTemplate = document.querySelector('#error').content; // Шаблон ошибки
+  var main = document.querySelector('main');
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var submit = adForm.querySelector('.ad-form__submit');
+  var reset = adForm.querySelector('.ad-form__reset');
   var titleInput = adForm.querySelector('#title');
   var typeSelect = adForm.querySelector('#type');
   var priceInput = adForm.querySelector('#price');
@@ -106,9 +105,9 @@
     }
   });
 
+  // Рисуем красную рамку у полей которые не прошли валидацию
   submit.addEventListener('click', function () {
     var input = adForm.querySelectorAll('input');
-
     input.forEach(function (element) {
       element.style = '';
       if (element.validity.valid === false) {
@@ -123,34 +122,34 @@
 
   // Закрытие поп-апа
   var closePopup = function () {
-    window.main.removeChild(window.currentPopup);
+    main.removeChild(main.lastElementChild);
     submit.disabled = false;
     submit.removeAttribute('style');
     document.removeEventListener('keydown', keydownPopupHandler);
   };
 
-  // Успешная отправка формы
+  // Попап успешной отправки данных на сервер
   var successHandler = function () {
+    var successTemplate = document.querySelector('#success').content;
+    var successClone = successTemplate.cloneNode(true);
     window.setStatusPage(true);
-    var successClone = window.successTemplate.cloneNode(true);
-    window.main.appendChild(successClone);
+    main.appendChild(successClone);
 
-    window.currentPopup = window.main.querySelector('.success');
-    window.currentPopup.addEventListener('click', function () {
+    main.querySelector('.success').addEventListener('click', function () {
       closePopup();
     });
 
     document.addEventListener('keydown', keydownPopupHandler);
   };
 
-  // Ошибка при отправки формы
+  // Попап с ошибкой
   var errorHandler = function (message) {
-    var errorClone = window.errorTemplate.cloneNode(true);
+    var errorTemplate = document.querySelector('#error').content;
+    var errorClone = errorTemplate.cloneNode(true);
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
-    window.main.appendChild(errorClone);
+    main.appendChild(errorClone);
 
-    window.currentPopup = window.main.querySelector('.error');
-    window.currentPopup.addEventListener('click', function () {
+    main.querySelector('.error').addEventListener('click', function () {
       closePopup();
     });
 
@@ -161,7 +160,6 @@
   // Отправка формы на сервер
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-
     window.backend.save(new FormData(adForm), successHandler, errorHandler);
 
     submit.disabled = true;
@@ -169,4 +167,12 @@
     submit.style.color = 'gray';
     submit.style.border = '4px solid #c5c5c5';
   });
+
+  reset.addEventListener('click', function () {
+    window.setStatusPage(true);
+  });
+
+  window.form = {
+    errorHandler: errorHandler
+  };
 })();

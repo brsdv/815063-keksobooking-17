@@ -4,7 +4,7 @@
   var ESC_KEY = 27; // Код клавишы ESC
 
   window.util = {
-    // Выполняем акшион если была нажата клавиша
+    // Выполняем экшион если была нажата клавиша
     escKeyEvent: function (evt, action) {
       if (evt.keyCode === ESC_KEY) {
         action();
@@ -17,6 +17,12 @@
         if (!status) {
           element.removeAttribute('disabled');
         }
+      });
+    },
+    // Убираем стили у всех обязательных полей
+    removeStyleInput: function (inputs) {
+      inputs.forEach(function (element) {
+        element.style = '';
       });
     }
   };

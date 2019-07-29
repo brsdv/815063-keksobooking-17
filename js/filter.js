@@ -57,9 +57,13 @@
   };
 
   // Фильтруем данные если все фильтры вернули true
-  window.filterPin = function (data) {
+  var filterPin = function (data) {
     return data.filter(function (element) {
       return getFilterType(element) && getFilterPrice(element) && getFilterRooms(element) && getFilterGuests(element) && getFilterFeatures(element);
     });
+  };
+
+  window.filter = {
+    filterPin: filterPin
   };
 })();

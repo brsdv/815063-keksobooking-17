@@ -22,8 +22,16 @@
     'conditioner': 'popup__feature--conditioner'
   };
 
+  // Удаляем контейнер если внутри него нет элементов
+  var removeElementHandler = function (card, element) {
+    if (element.childElementCount === 0) {
+      card.removeChild(element);
+    }
+  };
+
   // Очищаем элемент от чилдов и создаем новые
-  var createFeaturesElement = function (parent, array) {
+  var createFeaturesElement = function (clone, array) {
+    var parent = clone.querySelector('.popup__features');
     parent.textContent = '';
 
     array.forEach(function (element) {
@@ -31,17 +39,21 @@
       li.classList.add('popup__feature', featureMap[element]);
       return parent.appendChild(li);
     });
+
+    removeElementHandler(clone.querySelector('.map__card'), parent);
   };
 
   // Добавляем изображения в карточку из шаблона картинки и удаляем сам шаблон
-  var createPhotosElement = function (parent, array) {
+  var createPhotosElement = function (clone, array) {
+    var parent = clone.querySelector('.popup__photos');
     array.forEach(function (element) {
       var img = parent.querySelector('img').cloneNode(true);
       img.src = element;
       return parent.appendChild(img);
     });
-
     parent.removeChild(parent.querySelectorAll('img')[0]);
+
+    removeElementHandler(clone.querySelector('.map__card'), parent);
   };
 
   // Создаем карточку из шаблона
@@ -57,24 +69,24 @@
     cloneNode.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
     cloneNode.querySelector('.popup__description').textContent = card.offer.description;
 
-    createFeaturesElement(cloneNode.querySelector('.popup__features'), card.offer.features);
-    createPhotosElement(cloneNode.querySelector('.popup__photos'), card.offer.photos);
+    createFeaturesElement(cloneNode, card.offer.features);
+    createPhotosElement(cloneNode, card.offer.photos);
 
     return cloneNode;
   };
 
   // Рендерим карточку в Document-fragment
-  window.renderCard = function (card) {
+  var renderCard = function (card) {
     fragment.appendChild(createCard(card));
     return fragment;
   };
 
   // Удаляем карточку если она есть в DOM дереве и обработчик клавишы ESC
-  window.removeCard = function () {
-    var cardPopup = window.map.querySelector('article');
+  var removeCard = function () {
+    var cardPopup = document.querySelector('.map__card');
 
     if (cardPopup !== null) {
-      window.map.removeChild(cardPopup);
+      window.map.mapSection.removeChild(cardPopup);
       document.removeEventListener('keydown', keydownHandler);
     }
   };
@@ -85,30 +97,35 @@
   };
 
   var closeCardHandler = function () {
-    window.removeClassActive();
-    window.map.removeChild(window.map.querySelector('article'));
+    window.pin.removeClassActive();
+    window.map.mapSection.removeChild(document.querySelector('.map__card'));
     document.removeEventListener('keydown', keydownHandler);
   };
 
   // Закрываем карточку объявления при клике
   var closeCard = function () {
-    var closeElement = window.map.querySelector('.popup__close');
+    var closeElement = document.querySelector('.popup__close');
     closeElement.addEventListener('click', function () {
       closeCardHandler();
     });
   };
 
   // Рендерим карточку объявления
-  window.openCard = function (pin) {
-    var cardElement = window.map.querySelector('article');
+  var openCard = function (pin) {
+    var cardElement = document.querySelector('.map__card');
 
     // Если карточка отрисована, удаляем ее
     if (cardElement !== null) {
-      window.map.removeChild(cardElement);
+      window.map.mapSection.removeChild(cardElement);
     }
 
-    window.mapPins.after(window.renderCard(pin));
+    window.map.mapContainer.after(renderCard(pin));
     document.addEventListener('keydown', keydownHandler);
     closeCard();
+  };
+
+  window.card = {
+    removeCard: removeCard,
+    openCard: openCard
   };
 })();
