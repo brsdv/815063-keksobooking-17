@@ -29,21 +29,35 @@
     addressInput.value = currentCoordinateX + ', ' + currentCoordinateY;
   };
 
-  var successHandler = function (response) {
-    window.data = response; // Записываем данные полученные с сервера в глобальную переменную
-    mapContainer.appendChild(window.pin.renderPin(response)); // Отрисовываем пины
+  // Перерисовываем пины по выбранным фильтрам с тайм-аутом в пол секунды
+  var changeFilterHandler = function () {
+    var lastTimeout;
 
-    filterForm.addEventListener('change', window.filter.changeHandler);
+    if (lastTimeout) {
+      clearTimeout(lastTimeout);
+    }
+
+    lastTimeout = setTimeout(function () {
+      window.card.removeCard();
+      window.pin.rebuildPin(window.filter.filterPin(window.data));
+    }, 500);
+  };
+
+  var successHandler = function (data) {
+    window.data = data;
+    mapContainer.appendChild(window.pin.renderPin(data)); // Отрисовываем пины
+
+    filterForm.addEventListener('change', changeFilterHandler);
 
     mapContainer.addEventListener('click', function (evt) {
       var dataX = parseInt(evt.target.dataset.x, 10);
       var dataY = parseInt(evt.target.dataset.y, 10);
 
-      for (var i = 0; i < response.length; i++) {
+      for (var i = 0; i < data.length; i++) {
         // Ловим клик по координатам X, Y и отрисовываем карточку
-        if (dataX === response[i].location.x && dataY === response[i].location.y) {
+        if (dataX === data[i].location.x && dataY === data[i].location.y) {
           window.pin.setClassActive(evt.target);
-          window.card.openCard(response[i]);
+          window.card.openCard(data[i]);
         }
       }
     });
@@ -62,6 +76,7 @@
     pinMain.style.top = Math.floor(startCoordinateY - pinMainHalfHeight) + 'px'; // Возвращаем метку в стартовое положение координаты Y
     addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
     adForm.querySelector('#price').placeholder = 1000; // Возвращаем плейсхолдер цены в начальное состояние
+    adForm.querySelector('.ad-form-header img').src = 'img/muffin-grey.svg'; // Задаем стартовую картинку для аватара
 
     // Переводим страницу в неактивное состояние если пришло true, иначе активируем ее
     if (status) {
@@ -69,7 +84,7 @@
       adForm.classList.add('ad-form--disabled');
       window.card.removeCard();
       window.pin.removePin();
-      filterForm.removeEventListener('change', window.filter.changeHandler);
+      filterForm.removeEventListener('change', changeFilterHandler);
     } else {
       window.backend.load(successHandler, window.form.errorHandler); // Загрузка данных с сервера с обработкой ошибок
       mapSection.classList.remove('map--faded');

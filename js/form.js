@@ -52,7 +52,7 @@
     opt.options[index].selected = true;
   };
 
-  // Синхронность полей кол-во комнат и кол-во мест с ограничениями из словарей
+  // Синхронность полей кол-во комнат и кол-во мест
   var changeRoomHandler = function (val) {
     capacitySelect.value = CapacityPropertyMap[val];
 

@@ -8,38 +8,38 @@
   var pinTemplate = document.querySelector('#pin').content;
 
   // Создаем элементы из шаблона пина
-  var createPin = function (pin) {
+  var createPin = function (element) {
     var pinElement = pinTemplate.cloneNode(true);
 
-    pinElement.querySelector('img').src = pin.author.avatar;
-    pinElement.querySelector('img').alt = pin.offer.title;
-    pinElement.querySelector('img').dataset.x = pin.location.x;
-    pinElement.querySelector('img').dataset.y = pin.location.y;
-    pinElement.querySelector('button').dataset.x = pin.location.x;
-    pinElement.querySelector('button').dataset.y = pin.location.y;
-    pinElement.querySelector('.map__pin').style.left = pin.location.x - WIDTH_PIN / 2 + 'px';
-    pinElement.querySelector('.map__pin').style.top = pin.location.y - HEIGHT_PIN + 'px';
+    pinElement.querySelector('img').src = element.author.avatar;
+    pinElement.querySelector('img').alt = element.offer.title;
+    pinElement.querySelector('img').dataset.x = element.location.x;
+    pinElement.querySelector('img').dataset.y = element.location.y;
+    pinElement.querySelector('button').dataset.x = element.location.x;
+    pinElement.querySelector('button').dataset.y = element.location.y;
+    pinElement.querySelector('.map__pin').style.left = element.location.x - WIDTH_PIN / 2 + 'px';
+    pinElement.querySelector('.map__pin').style.top = element.location.y - HEIGHT_PIN + 'px';
 
     return pinElement;
   };
 
   // Рендерим 5 элементов в Document-fragment
   var renderPin = function (data) {
-    data.slice(0, 5).forEach(function (pin) {
-      fragment.appendChild(createPin(pin));
+    data.slice(0, 5).forEach(function (element) {
+      fragment.appendChild(createPin(element));
     });
 
     return fragment;
   };
 
   // Перерисовываем элементы в DOM'е, кроме главного пина
-  var rebuildPin = function (pins) {
+  var rebuildPin = function (data) {
     window.map.mapContainer.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {
         window.map.mapContainer.removeChild(element);
       }
     });
-    window.map.mapContainer.appendChild(renderPin(pins));
+    window.map.mapContainer.appendChild(renderPin(data));
   };
 
   // Удаляем активный класс у пина

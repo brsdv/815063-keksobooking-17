@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  // Словарь http ошибок
+  // Перечисление http ошибок
   var Code = {
     SUCCESS: 200,
     MOVED_PERMANENTLY: 301,

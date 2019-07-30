@@ -11,7 +11,7 @@
   var housingGuests = document.querySelector('#housing-guests');
   var housingFeatures = document.querySelectorAll('.map__features input');
 
-  // Словарь соответствия значений селекта Цены
+  // Перечисление значений селекта Цены
   var Price = {
     LOW: 'low',
     MIDDLE: 'middle',
@@ -63,21 +63,7 @@
     });
   };
 
-  // Перерисовываем пины по выбранным фильтрам с тайм-аутом в пол секунды
-  var changeHandler = function () {
-    var lastTimeout;
-
-    if (lastTimeout) {
-      clearTimeout(lastTimeout);
-    }
-
-    lastTimeout = setTimeout(function () {
-      window.card.removeCard();
-      window.pin.rebuildPin(filterPin(window.data));
-    }, 500);
-  };
-
   window.filter = {
-    changeHandler: changeHandler
+    filterPin: filterPin
   };
 })();
