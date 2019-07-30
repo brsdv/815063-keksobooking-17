@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var main = document.querySelector('main');
+  var main = document.querySelector('main'); // Секция main
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var submit = adForm.querySelector('.ad-form__submit');
   var reset = adForm.querySelector('.ad-form__reset');
@@ -107,13 +107,17 @@
 
   // Рисуем красную рамку у полей которые не прошли валидацию
   submit.addEventListener('click', function () {
-    var input = adForm.querySelectorAll('input');
-    input.forEach(function (element) {
+    adForm.querySelectorAll('input').forEach(function (element) {
       element.style = '';
       if (element.validity.valid === false) {
         element.style.boxShadow = '0 0 2px 2px #ff0000';
       }
     });
+  });
+
+  // Сбрасываем состояние страницы
+  reset.addEventListener('click', function () {
+    window.map.setStatusPage(true);
   });
 
   var keydownPopupHandler = function (evt) {
@@ -128,14 +132,14 @@
     document.removeEventListener('keydown', keydownPopupHandler);
   };
 
-  // Попап успешной отправки данных на сервер
+  // Попап успешной отправки данных
   var successHandler = function () {
     var successTemplate = document.querySelector('#success').content;
     var successClone = successTemplate.cloneNode(true);
-    window.setStatusPage(true);
+    window.map.setStatusPage(true);
     main.appendChild(successClone);
 
-    main.querySelector('.success').addEventListener('click', function () {
+    main.lastElementChild.addEventListener('click', function () {
       closePopup();
     });
 
@@ -149,7 +153,7 @@
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
     main.appendChild(errorClone);
 
-    main.querySelector('.error').addEventListener('click', function () {
+    main.lastElementChild.addEventListener('click', function () {
       closePopup();
     });
 
@@ -166,10 +170,6 @@
     submit.style.backgroundColor = 'lightgray';
     submit.style.color = 'gray';
     submit.style.border = '4px solid #c5c5c5';
-  });
-
-  reset.addEventListener('click', function () {
-    window.setStatusPage(true);
   });
 
   window.form = {

@@ -63,7 +63,21 @@
     });
   };
 
+  // Перерисовываем пины по выбранным фильтрам с тайм-аутом в пол секунды
+  var changeHandler = function () {
+    var lastTimeout;
+
+    if (lastTimeout) {
+      clearTimeout(lastTimeout);
+    }
+
+    lastTimeout = setTimeout(function () {
+      window.card.removeCard();
+      window.pin.rebuildPin(filterPin(window.data));
+    }, 500);
+  };
+
   window.filter = {
-    filterPin: filterPin
+    changeHandler: changeHandler
   };
 })();

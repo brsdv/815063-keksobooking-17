@@ -39,11 +39,10 @@
         window.map.mapContainer.removeChild(element);
       }
     });
-
     window.map.mapContainer.appendChild(renderPin(pins));
   };
 
-  // Удаляем активный класс у кнопки пина
+  // Удаляем активный класс у пина
   var removeClassActive = function () {
     var pinActive = document.querySelector('.map__pin--active');
 
@@ -58,16 +57,17 @@
 
     if (target.className === 'map__pin') {
       target.classList.add('map__pin--active');
-    } else if (target.tagName === 'IMG') {
+    } else if (target.tagName.toLowerCase() === 'img') {
       target.parentElement.classList.add('map__pin--active');
     }
   };
 
   // Удаляем все пользовательские пины которые есть в DOM дереве кроме основного пина
   var removePin = function () {
-    document.querySelector('.map__pins').querySelectorAll('button').forEach(function (element) {
+    var container = document.querySelector('.map__pin--main').parentNode;
+    container.querySelectorAll('button').forEach(function (element) {
       if (!element.classList.contains('map__pin--main')) {
-        document.querySelector('.map__pins').removeChild(element);
+        container.removeChild(element);
       }
     });
   };

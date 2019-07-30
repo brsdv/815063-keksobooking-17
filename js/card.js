@@ -112,11 +112,11 @@
 
   // Рендерим карточку объявления
   var openCard = function (pin) {
-    var cardElement = document.querySelector('.map__card');
+    var cardPopup = document.querySelector('.map__card');
 
     // Если карточка отрисована, удаляем ее
-    if (cardElement !== null) {
-      window.map.mapSection.removeChild(cardElement);
+    if (cardPopup !== null) {
+      window.map.mapSection.removeChild(cardPopup);
     }
 
     window.map.mapContainer.after(renderCard(pin));
