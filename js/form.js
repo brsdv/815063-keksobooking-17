@@ -1,11 +1,10 @@
 'use strict';
 
 (function () {
-  window.main = document.querySelector('main');
-  window.successTemplate = document.querySelector('#success').content; // Шаблон успешной отправки данных
-  window.errorTemplate = document.querySelector('#error').content; // Шаблон ошибки
+  var main = document.querySelector('main'); // Секция main
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var submit = adForm.querySelector('.ad-form__submit');
+  var reset = adForm.querySelector('.ad-form__reset');
   var titleInput = adForm.querySelector('#title');
   var typeSelect = adForm.querySelector('#type');
   var priceInput = adForm.querySelector('#price');
@@ -15,7 +14,7 @@
   var capacitySelect = adForm.querySelector('#capacity');
 
   // Словарь соответствия опций кол-во комнат к количеству мест
-  var CapacityProperty = {
+  var CapacityPropertyMap = {
     '1': '1',
     '2': '2',
     '3': '3',
@@ -23,7 +22,7 @@
   };
 
   // Словарь ограничения опций кол-ва мест по выбранным опциям кол-во комнат
-  var CapacityDisable = {
+  var CapacityDisableMap = {
     '1': ['0', '2', '3'],
     '2': ['0', '3'],
     '3': ['0'],
@@ -53,15 +52,15 @@
     opt.options[index].selected = true;
   };
 
-  // Синхронность полей кол-во комнат и кол-во мест с ограничениями из словарей
+  // Синхронность полей кол-во комнат и кол-во мест
   var changeRoomHandler = function (val) {
-    capacitySelect.value = CapacityProperty[val];
+    capacitySelect.value = CapacityPropertyMap[val];
 
     Array.from(capacitySelect).forEach(function (option) {
       option.disabled = false;
     });
 
-    CapacityDisable[val].forEach(function (value) {
+    CapacityDisableMap[val].forEach(function (value) {
       capacitySelect.querySelector('option[value="' + value + '"]').disabled = true;
     });
   };
@@ -106,40 +105,55 @@
     }
   });
 
+  // Рисуем красную рамку у полей которые не прошли валидацию
+  submit.addEventListener('click', function () {
+    adForm.querySelectorAll('input').forEach(function (element) {
+      element.style = '';
+      if (element.validity.valid === false) {
+        element.style.boxShadow = '0 0 2px 2px #ff0000';
+      }
+    });
+  });
+
+  // Сбрасываем состояние страницы
+  reset.addEventListener('click', function () {
+    window.map.setStatusPage(true);
+  });
+
   var keydownPopupHandler = function (evt) {
     window.util.escKeyEvent(evt, closePopup);
   };
 
   // Закрытие поп-апа
   var closePopup = function () {
-    window.main.removeChild(window.currentPopup);
+    main.removeChild(main.lastElementChild);
     submit.disabled = false;
     submit.removeAttribute('style');
     document.removeEventListener('keydown', keydownPopupHandler);
   };
 
-  // Успешная отправка формы
+  // Попап успешной отправки данных
   var successHandler = function () {
-    window.setStatusPage(true);
-    var successClone = window.successTemplate.cloneNode(true);
-    window.main.appendChild(successClone);
+    var successTemplate = document.querySelector('#success').content;
+    var successClone = successTemplate.cloneNode(true);
+    window.map.setStatusPage(true);
+    main.appendChild(successClone);
 
-    window.currentPopup = window.main.querySelector('.success');
-    window.currentPopup.addEventListener('click', function () {
+    main.lastElementChild.addEventListener('click', function () {
       closePopup();
     });
 
     document.addEventListener('keydown', keydownPopupHandler);
   };
 
-  // Ошибка при отправки формы
+  // Попап с ошибкой
   var errorHandler = function (message) {
-    var errorClone = window.errorTemplate.cloneNode(true);
+    var errorTemplate = document.querySelector('#error').content;
+    var errorClone = errorTemplate.cloneNode(true);
     errorClone.querySelector('.error__message').textContent = 'Произошла ошибка. ' + message;
-    window.main.appendChild(errorClone);
+    main.appendChild(errorClone);
 
-    window.currentPopup = window.main.querySelector('.error');
-    window.currentPopup.addEventListener('click', function () {
+    main.lastElementChild.addEventListener('click', function () {
       closePopup();
     });
 
@@ -150,7 +164,6 @@
   // Отправка формы на сервер
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-
     window.backend.save(new FormData(adForm), successHandler, errorHandler);
 
     submit.disabled = true;
@@ -158,4 +171,8 @@
     submit.style.color = 'gray';
     submit.style.border = '4px solid #c5c5c5';
   });
+
+  window.form = {
+    errorHandler: errorHandler
+  };
 })();

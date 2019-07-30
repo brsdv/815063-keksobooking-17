@@ -11,7 +11,7 @@
   var housingGuests = document.querySelector('#housing-guests');
   var housingFeatures = document.querySelectorAll('.map__features input');
 
-  // Словарь соответствия значений селекта Цены
+  // Перечисление значений селекта Цены
   var Price = {
     LOW: 'low',
     MIDDLE: 'middle',
@@ -57,9 +57,13 @@
   };
 
   // Фильтруем данные если все фильтры вернули true
-  window.filterPin = function (data) {
+  var filterPin = function (data) {
     return data.filter(function (element) {
       return getFilterType(element) && getFilterPrice(element) && getFilterRooms(element) && getFilterGuests(element) && getFilterFeatures(element);
     });
+  };
+
+  window.filter = {
+    filterPin: filterPin
   };
 })();

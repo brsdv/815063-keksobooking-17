@@ -4,7 +4,7 @@
   var cardTemplate = document.querySelector('#card').content;
   var fragment = document.createDocumentFragment();
 
-  // Словарь соответствия названия помещений и их топом
+  // Словарь соответствия названия помещений
   var typeMap = {
     'flat': 'Квартира',
     'bungalo': 'Бунгало',
@@ -22,59 +22,75 @@
     'conditioner': 'popup__feature--conditioner'
   };
 
+  // Удаляем контейнер если внутри него нет элементов
+  var removeElementHandler = function (cloneCard, element) {
+    if (element.childElementCount === 0) {
+      cloneCard.removeChild(element);
+    }
+  };
+
   // Очищаем элемент от чилдов и создаем новые
-  var createFeaturesElement = function (parent, array) {
+  var createFeaturesElement = function (clone, features) {
+    var parent = clone.querySelector('.popup__features');
     parent.textContent = '';
 
-    array.forEach(function (element) {
+    features.forEach(function (element) {
       var li = document.createElement('li');
       li.classList.add('popup__feature', featureMap[element]);
       return parent.appendChild(li);
     });
+
+    removeElementHandler(clone.querySelector('.map__card'), parent);
   };
 
   // Добавляем изображения в карточку из шаблона картинки и удаляем сам шаблон
-  var createPhotosElement = function (parent, array) {
-    array.forEach(function (element) {
+  var createPhotosElement = function (clone, photos) {
+    var parent = clone.querySelector('.popup__photos');
+    photos.forEach(function (element) {
       var img = parent.querySelector('img').cloneNode(true);
       img.src = element;
       return parent.appendChild(img);
     });
-
     parent.removeChild(parent.querySelectorAll('img')[0]);
+
+    removeElementHandler(clone.querySelector('.map__card'), parent);
   };
 
   // Создаем карточку из шаблона
-  var createCard = function (card) {
+  var createCard = function (element) {
     var cloneNode = cardTemplate.cloneNode(true);
 
-    cloneNode.querySelector('img').src = card.author.avatar;
-    cloneNode.querySelector('.popup__title').textContent = card.offer.title;
-    cloneNode.querySelector('.popup__text--address').textContent = card.offer.address;
-    cloneNode.querySelector('.popup__text--price').textContent = card.offer.price + '₽/ночь';
-    cloneNode.querySelector('.popup__type').textContent = typeMap[card.offer.type];
-    cloneNode.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты для ' + card.offer.guests + ' гостей';
-    cloneNode.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
-    cloneNode.querySelector('.popup__description').textContent = card.offer.description;
+    cloneNode.querySelector('img').src = element.author.avatar;
+    cloneNode.querySelector('.popup__title').textContent = element.offer.title;
+    cloneNode.querySelector('.popup__text--address').textContent = element.offer.address;
+    cloneNode.querySelector('.popup__text--price').textContent = element.offer.price + '₽/ночь';
+    cloneNode.querySelector('.popup__type').textContent = typeMap[element.offer.type];
+    cloneNode.querySelector('.popup__text--capacity').textContent = element.offer.rooms + ' комнаты для ' + element.offer.guests + ' гостей';
+    cloneNode.querySelector('.popup__text--time').textContent = 'Заезд после ' + element.offer.checkin + ', выезд до ' + element.offer.checkout;
+    cloneNode.querySelector('.popup__description').textContent = element.offer.description;
 
-    createFeaturesElement(cloneNode.querySelector('.popup__features'), card.offer.features);
-    createPhotosElement(cloneNode.querySelector('.popup__photos'), card.offer.photos);
+    createFeaturesElement(cloneNode, element.offer.features);
+    createPhotosElement(cloneNode, element.offer.photos);
 
     return cloneNode;
   };
 
   // Рендерим карточку в Document-fragment
-  window.renderCard = function (card) {
-    fragment.appendChild(createCard(card));
+  var renderCard = function (element) {
+    fragment.appendChild(createCard(element));
     return fragment;
   };
 
-  // Удаляем карточку если она есть в DOM дереве и обработчик клавишы ESC
-  window.removeCard = function () {
-    var cardPopup = window.map.querySelector('article');
+  // Получаем DOM-элемент карточки объявления
+  var getCardElement = function () {
+    var cardElement = document.querySelector('.map__card');
+    return cardElement;
+  };
 
-    if (cardPopup !== null) {
-      window.map.removeChild(cardPopup);
+  // Удаляем карточку если она есть в DOM дереве и обработчик клавишы ESC
+  var removeCard = function () {
+    if (getCardElement() !== null) {
+      window.map.mapSection.removeChild(getCardElement());
       document.removeEventListener('keydown', keydownHandler);
     }
   };
@@ -85,30 +101,33 @@
   };
 
   var closeCardHandler = function () {
-    window.removeClassActive();
-    window.map.removeChild(window.map.querySelector('article'));
+    window.pin.removeClassActive();
+    window.map.mapSection.removeChild(getCardElement());
     document.removeEventListener('keydown', keydownHandler);
   };
 
   // Закрываем карточку объявления при клике
   var closeCard = function () {
-    var closeElement = window.map.querySelector('.popup__close');
+    var closeElement = document.querySelector('.popup__close');
     closeElement.addEventListener('click', function () {
       closeCardHandler();
     });
   };
 
   // Рендерим карточку объявления
-  window.openCard = function (pin) {
-    var cardElement = window.map.querySelector('article');
-
+  var openCard = function (element) {
     // Если карточка отрисована, удаляем ее
-    if (cardElement !== null) {
-      window.map.removeChild(cardElement);
+    if (getCardElement() !== null) {
+      window.map.mapSection.removeChild(getCardElement());
     }
 
-    window.mapPins.after(window.renderCard(pin));
+    window.map.mapContainer.after(renderCard(element));
     document.addEventListener('keydown', keydownHandler);
     closeCard();
+  };
+
+  window.card = {
+    removeCard: removeCard,
+    openCard: openCard
   };
 })();
