@@ -4,6 +4,7 @@
   var MIN_Y_COORD = 130; // Минимальная координата Y
   var MAX_Y_COORD = 630; // Максимальная координата Y
   var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
+  var SET_TIMEOUT = 500; // Таймер в мс для функции SetTimeout()
 
   var mapSection = document.querySelector('.map'); // Секция карты
   var mapContainer = document.querySelector('.map__pins'); // Контейнер для всех меток
@@ -40,7 +41,7 @@
     lastTimeout = setTimeout(function () {
       window.card.removeCard();
       window.pin.rebuildPin(window.filter.filterPin(window.data));
-    }, 500);
+    }, SET_TIMEOUT);
   };
 
   var successHandler = function (data) {
@@ -75,7 +76,7 @@
     pinMain.style.left = Math.floor(startCoordinateX - pinMainHalfWidth) + 'px'; // Возвращаем метку в стартовое положение координаты X
     pinMain.style.top = Math.floor(startCoordinateY - pinMainHalfHeight) + 'px'; // Возвращаем метку в стартовое положение координаты Y
     addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
-    adForm.querySelector('#price').placeholder = 1000; // Возвращаем плейсхолдер цены в начальное состояние
+    adForm.querySelector('#price').placeholder = window.form.Price.FLAT; // Возвращаем плейсхолдер цены в начальное состояние
     adForm.querySelector('.ad-form-header img').src = 'img/muffin-grey.svg'; // Задаем стартовую картинку для аватара
 
     // Переводим страницу в неактивное состояние если пришло true, иначе активируем ее

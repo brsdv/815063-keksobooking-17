@@ -13,6 +13,14 @@
   var roomNumberSelect = adForm.querySelector('#room_number');
   var capacitySelect = adForm.querySelector('#capacity');
 
+  // Перечисление вида жилья с ценой
+  var Price = {
+    BUNGALO: 0,
+    FLAT: 1000,
+    HOUSE: 5000,
+    PALACE: 10000
+  };
+
   // Словарь соответствия опций кол-во комнат к количеству мест
   var CapacityPropertyMap = {
     '1': '1',
@@ -30,43 +38,53 @@
   };
 
   // Проверка соответствия типа жилья и цены
-  var changePriceHandler = function (val) {
-    if (val === 'bungalo') {
-      priceInput.placeholder = 0;
-      priceInput.min = 0;
-    } else if (val === 'flat') {
-      priceInput.placeholder = 1000;
-      priceInput.min = 1000;
-    } else if (val === 'house') {
-      priceInput.placeholder = 5000;
-      priceInput.min = 5000;
-    } else if (val === 'palace') {
-      priceInput.placeholder = 10000;
-      priceInput.min = 10000;
+  var changePriceHandler = function (value) {
+    if (value === 'bungalo') {
+      priceInput.placeholder = Price.BUNGALO;
+      priceInput.min = Price.BUNGALO;
+    } else if (value === 'flat') {
+      priceInput.placeholder = Price.FLAT;
+      priceInput.min = Price.FLAT;
+    } else if (value === 'house') {
+      priceInput.placeholder = Price.HOUSE;
+      priceInput.min = Price.HOUSE;
+    } else if (value === 'palace') {
+      priceInput.placeholder = Price.PALACE;
+      priceInput.min = Price.PALACE;
+    }
+  };
+
+  // Проверка на ввод максимального значения аттрибута max
+  var inputPriceHandler = function (value) {
+    if (value > parseInt(priceInput.max, 10)) {
+      priceInput.value = priceInput.max;
     }
   };
 
   // Синхронность полей время заезда и выезда
-  var changeTimeHandler = function (opt, index) {
-    opt.selectedOptions[0].selected = false;
-    opt.options[index].selected = true;
+  var changeTimeHandler = function (timeSelect, index) {
+    timeSelect.options[index].selected = true;
   };
 
   // Синхронность полей кол-во комнат и кол-во мест
-  var changeRoomHandler = function (val) {
-    capacitySelect.value = CapacityPropertyMap[val];
+  var changeRoomHandler = function (value) {
+    capacitySelect.value = CapacityPropertyMap[value];
 
     Array.from(capacitySelect).forEach(function (option) {
       option.disabled = false;
     });
 
-    CapacityDisableMap[val].forEach(function (value) {
-      capacitySelect.querySelector('option[value="' + value + '"]').disabled = true;
+    CapacityDisableMap[value].forEach(function (element) {
+      capacitySelect.querySelector('option[value="' + element + '"]').disabled = true;
     });
   };
 
   typeSelect.addEventListener('change', function (evt) {
     changePriceHandler(evt.target.value);
+  });
+
+  priceInput.addEventListener('input', function (evt) {
+    inputPriceHandler(evt.target.value);
   });
 
   timeInSelect.addEventListener('change', function (evt) {
@@ -173,6 +191,7 @@
   });
 
   window.form = {
+    Price: Price,
     errorHandler: errorHandler
   };
 })();
