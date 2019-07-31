@@ -68,10 +68,11 @@
 
   // Синхронность полей кол-во комнат и кол-во мест
   var changeRoomHandler = function (value) {
+    var capacitys = capacitySelect.querySelectorAll('option');
     capacitySelect.value = CapacityPropertyMap[value];
 
-    Array.from(capacitySelect).forEach(function (option) {
-      option.disabled = false;
+    capacitys.forEach(function (element) {
+      element.disabled = false;
     });
 
     CapacityDisableMap[value].forEach(function (element) {
@@ -127,7 +128,7 @@
   submit.addEventListener('click', function () {
     adForm.querySelectorAll('input').forEach(function (element) {
       element.style = '';
-      if (element.validity.valid === false) {
+      if (!element.validity.valid) {
         element.style.boxShadow = '0 0 2px 2px #ff0000';
       }
     });

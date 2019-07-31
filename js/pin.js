@@ -3,6 +3,8 @@
 (function () {
   var WIDTH_PIN = 50; // Ширина пользовательской метки, определяется в CSS
   var HEIGHT_PIN = 70; // Высота пользовательской метки, определяется в CSS
+  var NUMBER_BEGIN = 0; // Элемент с которого нужно начать обрезать массив
+  var NUMBER_END = 5; // Элемент на котором нужно закончить обрезать массив
 
   var fragment = document.createDocumentFragment();
   var pinTemplate = document.querySelector('#pin').content;
@@ -25,7 +27,7 @@
 
   // Рендерим 5 элементов в Document-fragment
   var renderPin = function (data) {
-    data.slice(0, 5).forEach(function (element) {
+    data.slice(NUMBER_BEGIN, NUMBER_END).forEach(function (element) {
       fragment.appendChild(createPin(element));
     });
 

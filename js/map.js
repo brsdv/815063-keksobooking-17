@@ -16,6 +16,7 @@
   var pinMainHalfHeight = pinMain.offsetHeight / 2; // Середина самой метки по Y
   var startCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth); // Середина начальной метки по X
   var startCoordinateY = Math.round(pinMain.offsetTop + pinMainHalfHeight); // Середина начальной метки по Y
+  var lastTimeout; // Переменная под функцию таймера, чтобы потом эту функцию можно было удалить
 
   // Функция-конструктор для вычисления координат
   var Coordinate = function (x, y) {
@@ -32,8 +33,6 @@
 
   // Перерисовываем пины по выбранным фильтрам с тайм-аутом в пол секунды
   var changeFilterHandler = function () {
-    var lastTimeout;
-
     if (lastTimeout) {
       clearTimeout(lastTimeout);
     }

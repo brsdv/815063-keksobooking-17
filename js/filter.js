@@ -45,7 +45,7 @@
 
   // Проверяем является ли значение "Дополнительные удобства" выделенным и строим новый массив который соответствует текущему значению
   var getFilterFeatures = function (element) {
-    var checkedElement = Array.from(housingFeatures).filter(function (input) {
+    var checkedElement = [].filter.call(housingFeatures, function (input) {
       return input.checked;
     }).map(function (input) {
       return input.value;
