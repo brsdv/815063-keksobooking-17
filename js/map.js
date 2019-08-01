@@ -1,15 +1,14 @@
 'use strict';
 
 (function () {
-  var MIN_Y_COORD = 130; // Минимальная координата Y
-  var MAX_Y_COORD = 630; // Максимальная координата Y
   var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
+  var MIN_Y = 130 - MAIN_HEIGHT_PIN; // Минимальная координата Y с вычетом высоты главной метки
+  var MAX_Y = 630 - MAIN_HEIGHT_PIN; // Максимальная координата Y с вычетом высоты главной метки
   var SET_TIMEOUT = 500; // Таймер в мс для функции SetTimeout()
 
   var mapSection = document.querySelector('.map'); // Секция карты
   var mapContainer = document.querySelector('.map__pins'); // Контейнер для всех меток
   var pinMain = document.querySelector('.map__pin--main'); // Начальная метка
-  var filterForm = document.querySelector('.map__filters'); // Форма всех фильтров на карте
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var addressInput = adForm.querySelector('#address'); // Поле "адрес"
   var pinMainHalfWidth = pinMain.offsetWidth / 2; // Середина самой метки по X
@@ -47,7 +46,7 @@
     window.data = data;
     mapContainer.appendChild(window.pin.renderPin(data)); // Отрисовываем пины
 
-    filterForm.addEventListener('change', changeFilterHandler);
+    window.filter.form.addEventListener('change', changeFilterHandler);
 
     mapContainer.addEventListener('click', function (evt) {
       var dataX = parseInt(evt.target.dataset.x, 10);
@@ -66,11 +65,11 @@
   // Активируем состояние страницы
   var setStatusPage = function (status) {
     window.util.disabledForm(adForm.querySelectorAll('fieldset'), status); // Дизейблим все поля формы объявления
-    window.util.disabledForm(filterForm.querySelectorAll('select'), status); // Дизейблим все поля формы фильтрации
+    window.util.disabledForm(window.filter.form.querySelectorAll('select'), status); // Дизейблим все поля формы фильтрации
     window.util.removeStyleInput(adForm.querySelectorAll('input:required')); // Убираем стили у обязательных полей
 
     adForm.reset(); // Сбрасываем форму подачи объявления
-    filterForm.reset(); // Сбрасываем форму фильтрации
+    window.filter.form.reset(); // Сбрасываем форму фильтрации
 
     pinMain.style.left = Math.floor(startCoordinateX - pinMainHalfWidth) + 'px'; // Возвращаем метку в стартовое положение координаты X
     pinMain.style.top = Math.floor(startCoordinateY - pinMainHalfHeight) + 'px'; // Возвращаем метку в стартовое положение координаты Y
@@ -84,7 +83,7 @@
       adForm.classList.add('ad-form--disabled');
       window.card.removeCard();
       window.pin.removePin();
-      filterForm.removeEventListener('change', changeFilterHandler);
+      window.filter.form.removeEventListener('change', changeFilterHandler);
     } else {
       window.backend.load(successHandler, window.form.errorHandler); // Загрузка данных с сервера с обработкой ошибок
       mapSection.classList.remove('map--faded');
@@ -111,13 +110,15 @@
 
       startCoordinate = new Coordinate(evtMove.clientX, evtMove.clientY);
 
-      var currentX = pinMain.offsetLeft - shift.x;
-      var currentY = pinMain.offsetTop - shift.y;
+      var currentX = pinMain.offsetLeft - shift.x; // Текущая координата по X
+      var currentY = pinMain.offsetTop - shift.y; // Текущая координата по Y
+      var minX = mapSection.clientLeft - pinMainHalfWidth; // Минимальная координата по X
+      var maxX = mapSection.clientWidth - pinMainHalfWidth; // Минимальная координата по Y
 
-      if (currentX >= mapSection.clientLeft - pinMainHalfWidth && currentX <= mapSection.clientWidth - pinMainHalfWidth) {
+      if (currentX >= minX && currentX <= maxX) {
         pinMain.style.left = currentX + 'px';
       }
-      if (currentY >= MIN_Y_COORD - MAIN_HEIGHT_PIN && currentY <= MAX_Y_COORD - MAIN_HEIGHT_PIN) {
+      if (currentY >= MIN_Y && currentY <= MAX_Y) {
         pinMain.style.top = currentY + 'px';
       }
     };
