@@ -2,8 +2,8 @@
 
 (function () {
   var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
-  var MIN_Y = 130 - MAIN_HEIGHT_PIN; // Минимальная координата Y с вычетом высоты главной метки
-  var MAX_Y = 630 - MAIN_HEIGHT_PIN; // Максимальная координата Y с вычетом высоты главной метки
+  var MIN_COORDINATE_Y = 130; // Минимальная координата Y
+  var MAX_COORDINATE_Y = 630; // Максимальная координата Y
   var SET_TIMEOUT = 500; // Таймер в мс для функции SetTimeout()
 
   var mapSection = document.querySelector('.map'); // Секция карты
@@ -112,13 +112,15 @@
 
       var currentX = pinMain.offsetLeft - shift.x; // Текущая координата по X
       var currentY = pinMain.offsetTop - shift.y; // Текущая координата по Y
-      var minX = mapSection.clientLeft - pinMainHalfWidth; // Минимальная координата по X
-      var maxX = mapSection.clientWidth - pinMainHalfWidth; // Минимальная координата по Y
+      var minX = currentX >= mapSection.clientLeft - pinMainHalfWidth; // Вернет true если текущая координата не выходит за начало блока карты по которой возможно перетаскивание
+      var maxX = currentX <= mapSection.clientWidth - pinMainHalfWidth; // Вернет true если текущая координата не выходит за конец блока карты по которой возможно перетаскивание
+      var minY = currentY >= MIN_COORDINATE_Y - MAIN_HEIGHT_PIN; // Вернет true если текущая координата не выходит за начало верхнего блока карты по которой возможно перетаскивание
+      var maxY = currentY <= MAX_COORDINATE_Y - MAIN_HEIGHT_PIN; // Вернет true если текущая координата не выходит за конец нижнего блока карты по которой возможно перетаскивание
 
-      if (currentX >= minX && currentX <= maxX) {
+      if (minX && maxX) {
         pinMain.style.left = currentX + 'px';
       }
-      if (currentY >= MIN_Y && currentY <= MAX_Y) {
+      if (minY && maxY) {
         pinMain.style.top = currentY + 'px';
       }
     };
