@@ -76,6 +76,7 @@
     addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
     adForm.querySelector('#price').placeholder = window.form.Price.FLAT; // Возвращаем плейсхолдер цены в начальное состояние
     adForm.querySelector('.ad-form-header img').src = 'img/muffin-grey.svg'; // Задаем стартовую картинку для аватара
+    window.photo.removePhotos(); // Удяляем фотографии загруженных объявлений из формы
 
     // Переводим страницу в неактивное состояние если пришло true, иначе активируем ее
     if (status) {

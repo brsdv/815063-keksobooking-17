@@ -192,6 +192,7 @@
   });
 
   window.form = {
+    adForm: adForm,
     Price: Price,
     errorHandler: errorHandler
   };
