@@ -1,20 +1,21 @@
 'use strict';
 
 (function () {
-  var MIN_Y_COORD = 130; // Минимальная координата Y
-  var MAX_Y_COORD = 630; // Максимальная координата Y
   var MAIN_HEIGHT_PIN = 81; // Высота главной метки, определяется метрикой scrollHeight в активном режиме страницы
+  var MIN_COORDINATE_Y = 130; // Минимальная координата Y
+  var MAX_COORDINATE_Y = 630; // Максимальная координата Y
+  var SET_TIMEOUT = 500; // Таймер в мс для функции SetTimeout()
 
   var mapSection = document.querySelector('.map'); // Секция карты
   var mapContainer = document.querySelector('.map__pins'); // Контейнер для всех меток
   var pinMain = document.querySelector('.map__pin--main'); // Начальная метка
-  var filterForm = document.querySelector('.map__filters'); // Форма всех фильтров на карте
   var adForm = document.querySelector('.ad-form'); // Форма заполнения объявления
   var addressInput = adForm.querySelector('#address'); // Поле "адрес"
   var pinMainHalfWidth = pinMain.offsetWidth / 2; // Середина самой метки по X
   var pinMainHalfHeight = pinMain.offsetHeight / 2; // Середина самой метки по Y
   var startCoordinateX = Math.round(pinMain.offsetLeft + pinMainHalfWidth); // Середина начальной метки по X
   var startCoordinateY = Math.round(pinMain.offsetTop + pinMainHalfHeight); // Середина начальной метки по Y
+  var lastTimeout; // Переменная под функцию таймера, чтобы потом эту функцию можно было удалить
 
   // Функция-конструктор для вычисления координат
   var Coordinate = function (x, y) {
@@ -31,8 +32,6 @@
 
   // Перерисовываем пины по выбранным фильтрам с тайм-аутом в пол секунды
   var changeFilterHandler = function () {
-    var lastTimeout;
-
     if (lastTimeout) {
       clearTimeout(lastTimeout);
     }
@@ -40,14 +39,14 @@
     lastTimeout = setTimeout(function () {
       window.card.removeCard();
       window.pin.rebuildPin(window.filter.filterPin(window.data));
-    }, 500);
+    }, SET_TIMEOUT);
   };
 
   var successHandler = function (data) {
     window.data = data;
     mapContainer.appendChild(window.pin.renderPin(data)); // Отрисовываем пины
 
-    filterForm.addEventListener('change', changeFilterHandler);
+    window.filter.form.addEventListener('change', changeFilterHandler);
 
     mapContainer.addEventListener('click', function (evt) {
       var dataX = parseInt(evt.target.dataset.x, 10);
@@ -66,17 +65,18 @@
   // Активируем состояние страницы
   var setStatusPage = function (status) {
     window.util.disabledForm(adForm.querySelectorAll('fieldset'), status); // Дизейблим все поля формы объявления
-    window.util.disabledForm(filterForm.querySelectorAll('select'), status); // Дизейблим все поля формы фильтрации
+    window.util.disabledForm(window.filter.form.querySelectorAll('select'), status); // Дизейблим все поля формы фильтрации
     window.util.removeStyleInput(adForm.querySelectorAll('input:required')); // Убираем стили у обязательных полей
 
     adForm.reset(); // Сбрасываем форму подачи объявления
-    filterForm.reset(); // Сбрасываем форму фильтрации
+    window.filter.form.reset(); // Сбрасываем форму фильтрации
 
     pinMain.style.left = Math.floor(startCoordinateX - pinMainHalfWidth) + 'px'; // Возвращаем метку в стартовое положение координаты X
     pinMain.style.top = Math.floor(startCoordinateY - pinMainHalfHeight) + 'px'; // Возвращаем метку в стартовое положение координаты Y
     addressInput.value = startCoordinateX + ', ' + startCoordinateY; // Задаем стартовые координаты в поле адрес
-    adForm.querySelector('#price').placeholder = 1000; // Возвращаем плейсхолдер цены в начальное состояние
+    adForm.querySelector('#price').placeholder = window.form.Price.FLAT; // Возвращаем плейсхолдер цены в начальное состояние
     adForm.querySelector('.ad-form-header img').src = 'img/muffin-grey.svg'; // Задаем стартовую картинку для аватара
+    window.photo.removePhotos(); // Удяляем фотографии загруженных объявлений из формы
 
     // Переводим страницу в неактивное состояние если пришло true, иначе активируем ее
     if (status) {
@@ -84,7 +84,7 @@
       adForm.classList.add('ad-form--disabled');
       window.card.removeCard();
       window.pin.removePin();
-      filterForm.removeEventListener('change', changeFilterHandler);
+      window.filter.form.removeEventListener('change', changeFilterHandler);
     } else {
       window.backend.load(successHandler, window.form.errorHandler); // Загрузка данных с сервера с обработкой ошибок
       mapSection.classList.remove('map--faded');
@@ -111,13 +111,17 @@
 
       startCoordinate = new Coordinate(evtMove.clientX, evtMove.clientY);
 
-      var currentX = pinMain.offsetLeft - shift.x;
-      var currentY = pinMain.offsetTop - shift.y;
+      var currentX = pinMain.offsetLeft - shift.x; // Текущая координата по X
+      var currentY = pinMain.offsetTop - shift.y; // Текущая координата по Y
+      var minX = currentX >= mapSection.clientLeft - pinMainHalfWidth; // Вернет true если текущая координата не выходит за начало блока карты по которой возможно перетаскивание
+      var maxX = currentX <= mapSection.clientWidth - pinMainHalfWidth; // Вернет true если текущая координата не выходит за конец блока карты по которой возможно перетаскивание
+      var minY = currentY >= MIN_COORDINATE_Y - MAIN_HEIGHT_PIN; // Вернет true если текущая координата не выходит за начало верхнего блока карты по которой возможно перетаскивание
+      var maxY = currentY <= MAX_COORDINATE_Y - MAIN_HEIGHT_PIN; // Вернет true если текущая координата не выходит за конец нижнего блока карты по которой возможно перетаскивание
 
-      if (currentX >= mapSection.clientLeft - pinMainHalfWidth && currentX <= mapSection.clientWidth - pinMainHalfWidth) {
+      if (minX && maxX) {
         pinMain.style.left = currentX + 'px';
       }
-      if (currentY >= MIN_Y_COORD - MAIN_HEIGHT_PIN && currentY <= MAX_Y_COORD - MAIN_HEIGHT_PIN) {
+      if (minY && maxY) {
         pinMain.style.top = currentY + 'px';
       }
     };

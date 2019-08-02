@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var TIMEOUT = 10000; // Таймер в мс
+
   // Перечисление http ошибок
   var Code = {
     SUCCESS: 200,
@@ -17,7 +19,7 @@
       var xhr = new XMLHttpRequest();
 
       xhr.responseType = 'json';
-      xhr.timeout = 10000;
+      xhr.timeout = TIMEOUT;
 
       xhr.addEventListener('load', function () {
         switch (xhr.status) {
@@ -55,7 +57,7 @@
       var xhr = new XMLHttpRequest();
 
       xhr.responseType = 'json';
-      xhr.timeout = 10000;
+      xhr.timeout = TIMEOUT;
 
       xhr.addEventListener('load', function () {
         switch (xhr.status) {

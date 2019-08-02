@@ -24,7 +24,7 @@
 
   // Удаляем контейнер если внутри него нет элементов
   var removeElementHandler = function (cloneCard, element) {
-    if (element.childElementCount === 0) {
+    if (element.firstElementChild === null) {
       cloneCard.removeChild(element);
     }
   };
@@ -51,7 +51,7 @@
       img.src = element;
       return parent.appendChild(img);
     });
-    parent.removeChild(parent.querySelectorAll('img')[0]);
+    parent.removeChild(parent.querySelector('img'));
 
     removeElementHandler(clone.querySelector('.map__card'), parent);
   };

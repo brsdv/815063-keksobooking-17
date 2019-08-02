@@ -5,14 +5,15 @@
   var MAX_PRICE = 50000; // Максимальное значение фильтра Цены
   var ANY_OPTION = 'any'; // Опция любого кол-ва или значения в селектах
 
-  var housingType = document.querySelector('#housing-type');
-  var housingPrice = document.querySelector('#housing-price');
-  var housingRooms = document.querySelector('#housing-rooms');
-  var housingGuests = document.querySelector('#housing-guests');
-  var housingFeatures = document.querySelectorAll('.map__features input');
+  var form = document.querySelector('.map__filters'); // Форма всех фильтров на карте
+  var housingType = form.querySelector('#housing-type');
+  var housingPrice = form.querySelector('#housing-price');
+  var housingRooms = form.querySelector('#housing-rooms');
+  var housingGuests = form.querySelector('#housing-guests');
+  var housingFeatures = form.querySelectorAll('.map__features input');
 
   // Перечисление значений селекта Цены
-  var Price = {
+  var PriceName = {
     LOW: 'low',
     MIDDLE: 'middle',
     HIGH: 'high'
@@ -26,9 +27,9 @@
   // Проверяем является ли значение "Цена за ночь" любым или соответствуем текущему значению которое ограничевается диапозоном цен
   var getFilterPrice = function (element) {
     switch (housingPrice.value) {
-      case Price.LOW: return element.offer.price <= MIN_PRICE;
-      case Price.MIDDLE: return element.offer.price >= MIN_PRICE && element.offer.price <= MAX_PRICE;
-      case Price.HIGH: return element.offer.price >= MAX_PRICE;
+      case PriceName.LOW: return element.offer.price <= MIN_PRICE;
+      case PriceName.MIDDLE: return element.offer.price >= MIN_PRICE && element.offer.price <= MAX_PRICE;
+      case PriceName.HIGH: return element.offer.price >= MAX_PRICE;
       default: return true;
     }
   };
@@ -45,7 +46,7 @@
 
   // Проверяем является ли значение "Дополнительные удобства" выделенным и строим новый массив который соответствует текущему значению
   var getFilterFeatures = function (element) {
-    var checkedElement = Array.from(housingFeatures).filter(function (input) {
+    var checkedElement = [].slice.call(housingFeatures).filter(function (input) {
       return input.checked;
     }).map(function (input) {
       return input.value;
@@ -64,6 +65,7 @@
   };
 
   window.filter = {
+    form: form,
     filterPin: filterPin
   };
 })();
