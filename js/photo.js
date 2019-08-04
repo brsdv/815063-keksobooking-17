@@ -32,7 +32,7 @@
 
   // Отрисовываем блоки и элементы img для фотографий объявления
   var photosHandler = function (files) {
-    Array.from(files).forEach(function (element) {
+    [].slice.call(files).forEach(function (element) {
       var imageElement = document.createElement('img');
       imageElement.style = 'margin-right:10px; border-radius:5px; width:70px; height:70px;';
 
